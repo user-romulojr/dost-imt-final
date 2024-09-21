@@ -1,0 +1,152 @@
+:root {
+    --ELEM_SPACING: 14px;
+}
+
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Open Sans', sans-serif;
+    background: linear-gradient(to bottom, #0087bc 5%, #ffffff 90%);
+}
+
+.whole-container {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    margin: 0;
+}
+
+
+.title-block {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 0;
+    margin-bottom: 20px;
+    font-size: 33px;
+}
+
+.text-center {
+    width: 100%;
+    text-align: center;
+}
+
+
+.form-block {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.form-container {
+    display: flex;
+    text-align: center;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #ffffff;
+    border: 0px solid white;
+    border-radius: 30px;
+    width: 330px;
+    padding: 20px;
+    margin: 0;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0px 0px 20px 5px rgba(0, 0, 0, 0.1);
+}
+
+.text-welcome {
+    font-size: 23px;
+}
+
+.text-enter {
+    font-size: 12px;
+    margin: var(--ELEM_SPACING) 0px;
+}
+
+.fields-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+}
+
+#password, #email {
+    width: 100%;
+    padding: 10px 5px;
+    border: 1px solid black;
+    border-radius: 10px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 14px;
+}
+
+.email-container, .pw-container {
+    width: 100%;
+}
+
+#password {
+    margin: var(--ELEM_SPACING) 0px;
+}
+
+.remember-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+input[type="checkbox"] {
+    appearance: none;
+    border: 1px solid black;
+    width: 11px;
+    height: 11px;
+    cursor: pointer;
+}
+
+input[type="checkbox"]:checked {
+    background-color: #0d4e86;
+    border-color: #0d4e86;
+}
+
+.label-remember {
+    font-size: 11px;
+}
+
+.input-submit {
+    color: white;
+    width: 100%;
+    margin: var(--ELEM_SPACING) 0px;
+    padding: 8px 0px;
+    background-color: #0d4e86;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    border: 0px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+input::placeholder {
+    font-family: 'Open Sans', sans-serif;
+    color: gray;
+}
+
+.action-forgot-pw {
+    font-size: 11px;
+    text-decoration: none;
+    color: gray;
+    font-style: italic;
+}
+
+.text-terms {
+    font-size: 11px;
+    margin-top: var(--ELEM_SPACING);
+}

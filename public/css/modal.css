@@ -1,0 +1,28 @@
+dialog {
+    border: none;
+    border-radius: 3px;
+
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    max-width: 80%;
+    background-color: white;
+
+
+}
+
+.dialog-container {
+    padding: 20px;
+}
+
+.form-container {
+    display: flex;
+}
+
+.label-container, .input-container {
+    display: flex;
+    padding: 5px;
+    flex-direction: column;
+}
