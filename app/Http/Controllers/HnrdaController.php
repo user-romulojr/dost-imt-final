@@ -15,8 +15,18 @@ class HnrdaController extends Controller
         'title' => ['id' => 'title', 'type' => 'text', 'label' => 'Title'],
     ];
 
-    public function index() {
-        $hnrdas = Hnrda::all();
+    public function index(Request $request) {
+        $query = Hnrda::query();
+
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%');
+            });
+        }
+
+        $hnrdas = $query->get();
+
         return view('hnrdas', ['hnrdas' => $hnrdas, 'formFields' => $this->formFields]);
     }
 

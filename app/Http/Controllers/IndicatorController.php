@@ -21,9 +21,16 @@ class IndicatorController extends Controller
         'end_year' => ['id' => 'endYear', 'type' => 'number', 'label' => 'End Year'],
     ];
 
-    public function index()
+    public $selectLabels = [
+        'hnrda' => 'HNRDA',
+        'priority' => 'Priority',
+        'sdg' => 'SDG',
+        'strategic_pillar' => 'Strategic Pillar',
+        'thematic_area' => 'Thematic Area',
+    ];
+
+    public function index(Request $request)
     {
-        $indicators = Indicator::all();
         $selectFields = [
             'hnrda' => Hnrda::all(),
             'priority' => Priority::all(),
@@ -31,15 +38,39 @@ class IndicatorController extends Controller
             'strategic_pillar' => StrategicPillar::all(),
             'thematic_area' => ThematicArea::all(),
         ];
-        $selectLabels = [
-            'HNRDA',
-            'Priority',
-            'SDG',
-            'Strategic Pillar',
-            'Thematic Area',
-        ];
 
-        return view('indicators', ['indicators' => $indicators, 'formFields' => $this->formFields, 'selectFields' => $selectFields, 'selectLabels' => $selectLabels]);
+        $query = Indicator::query();
+
+        if($request->has('hnrda_id')){
+            $query->where('hnrda_id', $request->input('hnrda_id'));
+        }
+
+        if($request->has('priority_id')){
+            $query->where('priority_id', $request->input('priority_id'));
+        }
+
+        if($request->has('sdg_id')){
+            $query->where('sdg_id', $request->input('sdg_id'));
+        }
+
+        if($request->has('strategic_pillar_id')){
+            $query->where('strategic_pillar_id', $request->input('strategic_pillar_id'));
+        }
+
+        if($request->has('thematic_area_id')){
+            $query->where('thematic_area_id', $request->input('thematic_area_id'));
+        }
+
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('indicator', 'like', '%' . $search . '%');
+            });
+        }
+
+        $indicators = $query->get();
+
+        return view('indicators', ['indicators' => $indicators, 'formFields' => $this->formFields, 'selectFields' => $selectFields, 'selectLabels' => $this->selectLabels]);
     }
 
     public function store(Request $request): RedirectResponse

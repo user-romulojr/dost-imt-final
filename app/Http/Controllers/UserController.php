@@ -23,21 +23,25 @@ class UserController extends Controller
         '6' => 'View Only',
     ];
 
-    public $colorCode = [
-        '1' => '#b8860b',
-        '2' => '#708090',
-        '3' => '#dc143c',
-        '4' => '#008080',
-        '5' => '#4b0082',
-        '6' => 'black',
+    public $formFields = [
+        'firstName' => ['id' => 'firstName', 'type' => 'text', 'label' => 'First Name'],
+        'lastName' => ['id' => 'lastName', 'type' => 'text', 'label' => 'Last Name'],
+        'email' => ['id' => 'email', 'type' => 'email', 'label' => 'Email'],
+        'contact' => ['id' => 'contact', 'type' => 'text', 'label' => 'Contact'],
+        'role' => ['id' => 'role', 'type' => 'text', 'label' => 'Role'],
+        'passowrd' => ['id' => 'password', 'type' => 'text', 'label' => 'Password'],
     ];
 
+   
     public function index()
     {
         $users = User::all();
         $agencies = Agency::all();
 
-        return view('users', ['users' => $users, 'accessLevel' => $this->accessLevel, 'colorCode' => $this->colorCode, 'agencies' => $agencies]);
+        return view('users', ['users' => $users,
+                                'agencies' => $agencies,
+                                'accessLevel' => $this->accessLevel,
+                    ]);
     }
 
     public function store(Request $request): RedirectResponse

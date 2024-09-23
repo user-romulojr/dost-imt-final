@@ -14,8 +14,17 @@ class ThematicAreaController extends Controller
         'title' => ['id' => 'title', 'type' => 'text', 'label' => 'Title'],
     ];
 
-    public function index() {
-        $areas = ThematicArea::all();
+    public function index(Request $request) {
+        $query = ThematicArea::query();
+
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%');
+            });
+        }
+
+        $areas = $query->get();
         return view('areas', ['areas' => $areas, 'formFields' => $this->formFields]);
     }
 

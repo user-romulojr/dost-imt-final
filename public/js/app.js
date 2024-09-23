@@ -8,10 +8,12 @@ function toggleProfileDropdown() {
     }
 }
 
+
 // Open Create User Dialog
 document.getElementById('openCreateDialog').addEventListener('click', function() {
     document.getElementById('createDialog').showModal();
 });
+
 
 // Close Create User Dialog
 document.getElementById('closeCreateDialog').addEventListener('click', function() {
@@ -39,17 +41,22 @@ function toggleContent(content, dropdown) {
 }
 
 function collapseSidebar() {
+    var nav_container_id = document.getElementById("nav-container-id");
     var sidebar = document.getElementById("sidebar");
     var main_content = document.getElementById("main-content-id");
     var collapse_icon = document.getElementById("collapse-icon-id");
 
-    if(sidebar.style.display == "none" || sidebar.style.display == "") {
-        sidebar.style.display = "flex";
-        main_content.style.width = "80vw";
+    if(nav_container_id.style.display == "none" || nav_container_id.style.display == "") {
+        main_content.style.width = "83.8vw"; /* ADJUST HERE */
+        nav_container_id.style.width = "15vw"; /* ADJUST HERE */
+        sidebar.style.padding = "12px";
+        sidebar.style.paddingRight = "0";
+        nav_container_id.style.display = "flex";
         collapse_icon.style.transform = "";
     } else {
-        sidebar.style.display = "none";
-        main_content.style.width = "98.7vw";
+        main_content.style.width = "98.8vw"; /* ADJUST HERE */
+        nav_container_id.style.display = "none";
+        sidebar.style.padding = "0";
         collapse_icon.style.transform = "rotate(180deg)";
     }
 }

@@ -15,8 +15,17 @@ class SdgController extends Controller
         'description' => ['id' => 'description', 'type' => 'text', 'label' => 'Description'],
     ];
 
-    public function index() {
-        $sdgs = Sdg::all();
+    public function index(Request $request) {
+        $query = Sdg::query();
+
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%');
+            });
+        }
+
+        $sdgs = $query->get();
         return view('sdgs', ['sdgs' => $sdgs, 'formFields' => $this->formFields]);
     }
 

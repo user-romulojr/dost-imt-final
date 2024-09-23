@@ -18,9 +18,17 @@ class AgencyController extends Controller
         'website' => ['id' => 'website', 'type' => 'text', 'label' => 'Website'],
     ];
 
+    public $selectLabels = [
+        'agency_group' => 'Agency Group',
+    ];
+
     public function index() {
         $agencies = Agency::all();
-        return view('agencies', ['agencies' => $agencies, 'formFields' => $this->formFields]);
+        $selectFields = [
+            'agency_group' => [],
+        ];
+
+        return view('agencies', ['agencies' => $agencies, 'formFields' => $this->formFields, 'selectLabels' => $this->selectLabels, 'selectFields' => $selectFields]);
     }
 
     public function store(Request $request): RedirectResponse

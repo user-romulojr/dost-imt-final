@@ -14,8 +14,17 @@ class PriorityController extends Controller
         'title' => ['id' => 'title', 'type' => 'text', 'label' => 'Title'],
     ];
 
-    public function index() {
-        $priorities = Priority::all();
+    public function index(Request $request) {
+        $query = Priority::query();
+
+        $search = $request->input('search');
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%');
+            });
+        }
+
+        $priorities = $query->get();
         return view('priorities', ['priorities' => $priorities, 'formFields' => $this->formFields]);
     }
 
