@@ -1,6 +1,6 @@
-<div id="sidebar" class="left-bar" style="display: flex;">
-    <div class="nav-container">
-        <nav class="nav">
+<div class="left-bar" id="sidebar">
+    <div class="nav-container" id="nav-container-id" style="display: flex;">
+        <nav class="nav-class">
             <ul>
                 <div class="list-dashboard-container {{ request()->is('dashboard') ? 'active' : '' }}">
                     <div class="dboard-icon-container">
@@ -88,7 +88,7 @@
         </nav>
     </div>
 
-    <div class="collapse-container">
+    <div class="collapse-container" id="collapse-container-id">
         <button class="button-collapse" onclick="collapseSidebar()">
             <div id="collapse-icon-id" class="collapse-icon-container">
                 @include('svg.dropleft-icon')

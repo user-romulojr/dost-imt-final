@@ -1,10 +1,61 @@
 <x-app-layout>
-    <h1>Users</h1>
+    <x-title-page>Users</x-title-page>
 
-    <!-- Add Button -->
-    <button id="openCreateDialog" class="btn btn-primary">
-        Add New User
-    </button>
+    <x-horizontal-line></x-horizontal-line>
+
+    <div class="options-container">
+        <div style="display: flex; gap: 30px;">
+                <div class="custom-dropdown">
+                    <div class="dropdown-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">
+                        <span>Filter By</span>
+                        @include('svg.dropdown-icon')
+                    </div>
+
+                    <div class="dropdown-content" id="dropdown-content-id">
+                        <div class="dropdown-header">
+                            <span>Filter By</span>
+                            <div class="close-icon-container">@include('svg.close-icon')</div>
+                        </div>
+                        <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                            @csrf
+                                <div class="dropdown-main">
+                                        <div class="input-container">
+                                            <label>Agency</label>
+                                            <select class="select-input" id="agency_id" name="agency_id">
+                                                <option disabled selected>Select Option</option>
+                                                @foreach ($agencies as $agency)
+                                                    <option value="{{ $agency->id }}">{{ $agency->acronym }} - {{ $agency->agency }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="input-container">
+                                            <label>Access Level</label>
+                                            <select class="select-input">
+                                            </select>
+                                        </div>
+                                    <div class="line-container"></div>
+                                </div>
+                            <div class="dropdown-footer">
+                                <button type="submit" class="primary-button">Filter</button>
+                                <button type="button" class="secondary-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div>
+                    <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                        @csrf
+                        <input type="text" class="input-search" name="search" placeholder="Search...">
+                    </form>
+                </div>
+        </div>
+        <div>
+            <button class="manage-button" id="openCreateDialog">
+                @include('svg.gear-icon')
+                <span>Add User</span>
+            </button>
+        </div>
+    </div>
 
     <table class="table-content">
         <thead>
@@ -39,113 +90,162 @@
                 </tr>
             @endforeach
         </tbody>
-    </table>
 
 
-    <!-- Add Dialog -->
     <dialog id="createDialog">
-        <div class="dialog-container">
-            <form id="createForm" action="{{ route('users.store') }}" method="POST">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>Add User</span>
+                <div class="close-icon-container" onclick="closeDialog('createDialog')">@include('svg.close-icon')</div>
+            </div>
+            <form method="POST" action="{{ route('users.store') }}" id="createForm">
                 @csrf
-
-                <div class="form-container">
-                    <div class="label-container">
+                <div class="modal-main">
+                    <div class="input-container">
                         <label for="firstName" class="form-label">First Name</label>
-                        <label for="lastName" class="form-label">Last Name</label>
-                        <label for="agency" class="form-label">Agency</label>
-                        <label for="email" class="form-label">Email</label>
-                        <label for="contact" class="form-label">Contact</label>
-                        <label for="role" class="form-label">Role</label>
-                        <label for="password" class="form-label">Password</label>
+                        <input type="text" class="input-layout" id="firstName" name="firstName" required>
                     </div>
 
                     <div class="input-container">
-                        <input type="text" class="form-control" id="firstName" name="firstName" required>
-                        <input type="text" class="form-control" id="lastName" name="lastName" required>
-                        <select id="AgencyID" name="agency_id">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="input-layout" id="lastName" name="lastName" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="agency" class="form-label">Agency</label>
+                        <select class="select-input" id="AgencyID" name="agency_id">
                             <option disabled selected>Select agency designated</option>
                             @foreach ($agencies as $agency)
                                 <option value={{ $agency->id }}>{{ $agency->agency }}</option>
                             @endforeach
                         </select>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                        <input type="text" class="form-control" id="contact" name="contact">
-                        <input type="text" class="form-control" id="role" name="role">
-                        <input type="password" class="form-control" id="password" name="password" required>
-                    </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Create</button>
-                    <button type="button" id="closeCreateDialog" class="btn btn-secondary">Close</button>
-                </div>
-            </form>
-        </div>
-    </dialog>
-
-    <!-- Edit Dialog -->
-    <dialog id="editDialog">
-        <div class="dialog-container">
-            <form id="editForm" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="form-container">
-                    <div class="label-container">
-                        <label for="editFirstName" class="form-label">First Name</label>
-                        <label for="editLastName" class="form-label">Last Name</label>
-                        <label for="editAgency" class="form-label">Agency</label>
-                        <label for="editEmail" class="form-label">Email</label>
-                        <label for="editContact" class="form-label">Contact</label>
-                        <label for="editRole" class="form-label">Role</label>
-                        <label for="editPassword" class="form-label">Password</label>
                     </div>
 
                     <div class="input-container">
-                        <input type="text" class="form-control" id="editFirstName" name="firstName" required>
-                        <input type="text" class="form-control" id="editLastName" name="lastName" required>
-                        <select id="editAgencyID" name="agency_id">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="input-layout" id="email" name="email" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="contact" class="form-label">Contact</label>
+                        <input type="text" class="input-layout" id="contact" name="contact">
+                    </div>
+
+                    <div class="input-container">
+                        <label for="role" class="form-label">Role</label>
+                        <input type="text" class="input-layout" id="role" name="role">
+                    </div>
+
+                    <div class="input-container">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="input-layout" id="password" name="password" required>
+                    </div>
+
+
+                    <div class="line-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="primary-button">Save</button>
+                    <button class="secondary-button" onclick="closeDialog('createDialog')">Close</button>
+                </div>
+            </form>
+            </div>
+    </dialog>
+
+    <dialog id="editDialog">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>Update User</span>
+                <div class="close-icon-container" onclick="closeDialog('editDialog')">@include('svg.close-icon')</div>
+            </div>
+            <form method="POST" id="editForm">
+                <div class="modal-main">
+                    @csrf
+                    @method('PUT')
+
+                    <div class="input-container">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" class="input-layout" id="edit_firstName" name="firstName" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" class="input-layout" id="edit_lastName" name="lastName" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="agency" class="form-label">Agency</label>
+                        <select class="select-input" id="edit_agencyID" name="agency_id">
+                            <option disabled selected>Select agency designated</option>
                             @foreach ($agencies as $agency)
                                 <option value={{ $agency->id }}>{{ $agency->agency }}</option>
                             @endforeach
                         </select>
-                        <input type="email" class="form-control" id="editEmail" name="email" required>
-                        <input type="text" class="form-control" id="editContact" name="contact">
-                        <input type="text" class="form-control" id="editRole" name="role">
-                        <input type="password" class="form-control" id="editPassword" name="password" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="input-layout" id="edit_email" name="email" required>
+                    </div>
+
+                    <div class="input-container">
+                        <label for="contact" class="form-label">Contact</label>
+                        <input type="text" class="input-layout" id="edit_contact" name="contact">
+                    </div>
+
+                    <div class="input-container">
+                        <label for="role" class="form-label">Role</label>
+                        <input type="text" class="input-layout" id="edit_role" name="role">
+                    </div>
+
+                    <div class="input-container">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="input-layout" id="edit_password" name="password" required>
+                    </div>
+
+                    <div class="line-container"></div>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button type="submit" class="primary-button">Save</button>
                     </div>
                 </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Update</button>
-                    <button type="button" id="closeEditDialog" class="btn btn-secondary">Close</button>
-                </div>
             </form>
-
-            <form id="deleteUserForm" method="POST">
+            <form id="deleteForm" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
+                <div class="modal-footer">
+                    <button type="submit" class="primary-button">Delete</button>
+                    <button class="secondary-button" onclick="closeDialog('editDialog')">Close</button>
+                </div>
             </form>
         </div>
     </dialog>
+
+
+
 
     @push('script')
         <script>
             function openEditDialog(id, firstName, lastName, agencyID, email, contact, role) {
                 const editForm = document.getElementById('editForm');
                 editForm.action = `/users/${id}/update`;
-                document.getElementById('editFirstName').value = firstName;
-                document.getElementById('editLastName').value = lastName;
-                document.getElementById('editAgencyID').value = agencyID;
-                document.getElementById('editEmail').value = email;
-                document.getElementById('editContact').value = contact;
-                document.getElementById('editRole').value = role;
+                document.getElementById('edit_firstName').value = firstName;
+                document.getElementById('edit_lastName').value = lastName;
+                document.getElementById('edit_agencyID').value = agencyID;
+                document.getElementById('edit_email').value = email;
+                document.getElementById('edit_contact').value = contact;
+                document.getElementById('edit_role').value = role;
 
-                const deleteForm = document.getElementById('deleteUserForm');
+                const deleteForm = document.getElementById('deleteForm');
                 deleteForm.action = `/users/${id}/delete`;
 
                 document.getElementById('editDialog').showModal();
+            }
+
+            function closeDialog(dialog) {
+                event.preventDefault();
+                const dialogContainer = document.getElementById(dialog);
+
+                dialogContainer.close();
             }
         </script>
     @endpush

@@ -1,9 +1,1 @@
-<svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="svg-indicators">
-    <rect width="27.5" height="27.5" fill="url(#pattern0_743_140)"/>
-    <defs>
-    <pattern id="pattern0_743_140" patternContentUnits="objectBoundingBox" width="1" height="1">
-    <use xlink:href="#image0_743_140" transform="scale(0.0333333)"/>
-    </pattern>
-    <image id="image0_743_140" width="30" height="30" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB4AAAAeCAYAAAA7MK6iAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAX0lEQVR4nO2TQQrAMAgE53n+/wnmIfbSQw+BWCoJ1B3wGAeCA6IjBgwgisbvnUu8UPqUL5k9/EJ6R5wS+6mvtmJ5+rj6YeqYd8dU2nHsELs6/j2mjsmnw66OM6hj0YQLbe9Hc/2p3SkAAAAASUVORK5CYII="/>
-    </defs>
-</svg>
+<svg width="256px" height="256px" viewBox="0 0 32 32" id="i-options" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" class="svg-indicators"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M28 6 L4 6 M28 16 L4 16 M28 26 L4 26 M24 3 L24 9 M8 13 L8 19 M20 23 L20 29"></path> </g></svg>

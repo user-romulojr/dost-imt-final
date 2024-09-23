@@ -5,13 +5,46 @@
 
     <div class="options-container">
         <div style="display: flex; gap: 30px;">
-            <div>
-                <button class="filter-button">
+            <div class="custom-dropdown">
+                <div class="dropdown-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">
                     <span>Filter By</span>
                     @include('svg.dropdown-icon')
-                </button>
+                </div>
+
+                <div class="dropdown-content" id="dropdown-content-id">
+                    <div class="dropdown-header">
+                        <span>Filter By</span>
+                        <div class="close-icon-container" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">@include('svg.close-icon')</div>
+                    </div>
+                    <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                        @csrf
+                        <div class="dropdown-main">
+                                @foreach ($selectFields as $classification => $allCategories)
+                                    <div class="input-container" style="margin-bottom: 1px;">
+                                        <label>{{ $selectLabels[$classification] }}</label>
+                                        <select class="select-input" id="{{ $classification }}_id" name="{{ $classification }}_id">
+                                            <option disabled selected>Select Option</option>
+                                            @foreach ($allCategories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->title }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endforeach
+                            <div class="line-container"></div>
+                        </div>
+                        <div class="dropdown-footer">
+                            <button type="submit" class="primary-button">Filter</button>
+                            <button type="button" class="secondary-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">Close</button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <input type="text" class="input-search" name="search" placeholder="Search...">
+            <div>
+                <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                    @csrf
+                    <input type="text" class="input-search" name="search" placeholder="Search...">
+                </form>
+            </div>
         </div>
         <div>
             <button class="manage-button" onclick="openSelectDialog()">
@@ -22,21 +55,33 @@
     </div>
 
     <dialog id="selectDialog">
-        <div class="dialog-container">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>DOST Primary Indicators</span>
+                <div class="close-icon-container" onclick="closeSelectDialog()">@include('svg.close-icon')</div>
+            </div>
+            <div class="modal-subheader">
+                Choose your primary indicators from the Philippine Development Plan's list of indicators below.
+            </div>
             <form action="{{ route('primaryIndicators.select')}}" method="POST">
-                @csrf
-
-                @foreach($unselectedIndicators as $unselectedIndicator)
-                    <div>
-                        <input type="checkbox" name="items[]" value="{{ $unselectedIndicator->id }}">
-                        <label>{{ $unselectedIndicator->indicator }}</label>
-                    </div>
-                @endforeach
-                <button type="submit">Save</button>
+                <div class="modal-main">
+                    @csrf
+                    @foreach($unselectedIndicators as $unselectedIndicator)
+                        <div>
+                            <input type="checkbox" name="items[]" value="{{ $unselectedIndicator->id }}">
+                            <label>{{ $unselectedIndicator->indicator }}</label>
+                        </div>
+                    @endforeach
+                    <div class="line-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="primary-button">Save</button>
+                    <button onclick="closeSelectDialog()" class="secondary-button">Close</button>
+                </div>
             </form>
-            <button onclick="closeSelectDialog()" class="btn btn-secondary">Close</button>
         </div>
     </dialog>
+
 
     <table class="table-content">
         <thead>
@@ -44,6 +89,7 @@
                 <th rowspan="2">Indicator</th>
                 <th rowspan="2">Major Final Output</th>
                 <th colspan="6" style="text-align: center;">Target</th>
+                <th colspan="6" style="text-align: center;">Accomplished</th>
                 <th rowspan="2">Comments</th>
                 <th rowspan="2">Action</th>
             </tr>
@@ -51,16 +97,19 @@
                 @foreach ($years as $year)
                     <th>{{ $year }}</th>
                 @endforeach
+                @foreach ($years as $year)
+                    <th>{{ $year }}</th>
+                @endforeach
             </tr>
         </thead>
         <tbody>
-            @foreach ($selectedIndicators as $selectedIndicator)
+            @foreach ($displayedIndicators as $displayedIndicator)
                 @php
-                    $mfoCount = $selectedIndicator->majorFinalOutputs()->count();
+                    $mfoCount = $displayedIndicator->majorFinalOutputs()->count();
                     $counter = 0;
                 @endphp
 
-                @foreach ($selectedIndicator->majorFinalOutputs as $majorFinalOutput)
+                @foreach ($displayedIndicator->majorFinalOutputs as $majorFinalOutput)
                     @php
                         $counter++;
                         $successIndicators = $majorFinalOutput->successIndicators;
@@ -70,11 +119,11 @@
                     {{-- style="{{ $counter == $mfoCount ? 'border-bottom: 1px solid #CBCBCB;' : '' }}" --}}
                         @if ($counter == 1)
                             <td rowspan={{ $mfoCount }}>
-                                {{ $selectedIndicator->indicator }}
+                                {{ $displayedIndicator->indicator }}
                             </td>
                         @endif
 
-                        <td id="mfo-{{ $selectedIndicator->id }}-{{ $counter }}">
+                        <td id="mfo-{{ $displayedIndicator->id }}-{{ $counter }}">
                             {{ $majorFinalOutput->major_final_output }}
                         </td>
 
@@ -82,6 +131,14 @@
                             <td id="row-{{ $counter }}-{{ $year }}">
                                 @if ($successIndicators->contains('year', $year))
                                     {{ $successIndicators->firstWhere('year', $year)->target }}
+                                @endif
+                            </td>
+                        @endforeach
+
+                        @foreach ($years as $year)
+                            <td id="row-{{ $counter }}-{{ $year }}">
+                                @if ($successIndicators->contains('year', $year))
+                                    {{ $successIndicators->firstWhere('year', $year)->accomplished }}
                                 @endif
                             </td>
                         @endforeach
@@ -108,11 +165,11 @@
                                 @method('DELETE')
                                 <button type="submit" class="button-action" style="margin-bottom: 5px;">–</button>
                             </form>
-                            <button class="button-action" onclick="openEditDialog({{ $selectedIndicator->id }}, {{ $majorFinalOutput->id }}, {{ $counter }},
-                                {{ $currentYear }}, {{ $selectedIndicator->end_year }},
+                            <button class="button-action" onclick="openEditDialog({{ $displayedIndicator->id }}, {{ $majorFinalOutput->id }}, {{ $counter }},
+                                {{ $currentYear }}, {{ $displayedIndicator->end_year }},
                                  {
-                                    @for ($year = $currentYear; $year <= $selectedIndicator->end_year; $year++)
-                                        _{{ $year }}: '{{ $successIndicators->firstWhere('year', $year)->target }}',
+                                    @for ($year = $currentYear; $year <= $displayedIndicator->end_year; $year++)
+                                        '_{{ $year }}': '{{ $successIndicators->firstWhere('year', $year)->target }}',
                                     @endfor
                                  })"
                                     style="cursor: pointer;">/</button>
@@ -123,7 +180,7 @@
                 <tr style="border-bottom: 1px solid #CBCBCB;">
                     <td>
                         @if ($mfoCount == 0)
-                            {{ $selectedIndicator->indicator }}
+                            {{ $displayedIndicator->indicator }}
                         @endif
                     </td>
 
@@ -135,12 +192,16 @@
                         <td></td>
                     @endforeach
 
+                    @foreach ($years as $year)
+                        <td></td>
+                    @endforeach
+
                     <td>
 
                     </td>
 
                     <td>
-                        <button class="button-action" onclick="openCreateDialog({{ $selectedIndicator->id }}, {{ $currentYear }}, {{ $selectedIndicator->end_year }})">+</button>
+                        <button class="button-action" onclick="openCreateDialog({{ $displayedIndicator->id }}, {{ $currentYear }}, {{ $displayedIndicator->end_year }})">+</button>
                     </td>
                 </tr>
             @endforeach
@@ -148,43 +209,55 @@
     </table>
 
     <dialog id="createDialog">
-        <div class="dialog-container">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>Add Major Final Output</span>
+                <div class="close-icon-container" onclick="closeDialog('createDialog', 'create-input-container')">@include('svg.close-icon')</div>
+            </div>
             <form method="POST" id="storeForm">
-                @csrf
-                <div class="form-container">
-                    <div class="label-container" id="create-label-container">
-
-                    </div>
+                <div class="modal-main">
+                    @csrf
                     <div class="input-container" id="create-input-container">
-
+                        <div id="create-mfo-container" style="margin-bottom: 10px;"></div>
+                        <div style="display: flex; gap: 25px">
+                            <div id="create-target-container"></div>
+                            <div id="create-accomplished-container"></div>
+                        </div>
                     </div>
+                    <div class="line-container"></div>
                 </div>
-                <button type="submit">Save</button>
+                <div class="modal-footer">
+                    <button type="submit" class="primary-button">Save</button>
+                    <button class="secondary-button" onclick="closeDialog('createDialog', 'create-input-container')">Close</button>
+                </div>
             </form>
-            <button onclick="closeDialog('createDialog', 'create-label-container', 'create-input-container')">Close</button>
-        </div>
+            </div>
     </dialog>
 
     <dialog id="editDialog">
-        <div class="dialog-container">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>Update Major Final Output</span>
+                <div class="close-icon-container" onclick="closeDialog('editDialog', 'edit-input-container')">@include('svg.close-icon')</div>
+            </div>
             <form method="POST" id="updateForm">
-                @csrf
-                @method('PUT')
-
-                <div class="form-container">
-                    <div class="label-container" id="edit-label-container">
-
-                    </div>
+                <div class="modal-main">
+                    @csrf
+                    @method('PUT')
                     <div class="input-container" id="edit-input-container">
 
                     </div>
+                    <div class="line-container"></div>
                 </div>
-                <button type="submit">Update</button>
+                <div class="modal-footer">
+                    <button type="submit" class="primary-button">Save</button>
+                    <button class="secondary-button" onclick="closeDialog('editDialog', 'edit-input-container')">Close</button>
+                </div>
             </form>
-            <button onclick="closeDialog('editDialog', 'edit-label-container', 'edit-input-container')">Close</button>
-            </form>
-        </div>
+            </div>
     </dialog>
+
+
 
     <dialog id="commentSettings">
         <div class="dialog-container">
@@ -218,6 +291,7 @@
             }
 
             function closeSelectDialog() {
+                event.preventDefault();
                 document.getElementById('selectDialog').close();
             }
 
@@ -225,32 +299,51 @@
                 const storeForm = document.getElementById('storeForm');
                 storeForm.action = `/indicators/primary/${id}/store`;
 
-                const inputContainer = document.getElementById('create-input-container');
-                const labelContainer = document.getElementById('create-label-container');
+                const mfoContainer = document.getElementById('create-mfo-container');
+
+                const majorFinalOutputLabel = document.createElement('label');
+                majorFinalOutputLabel.textContent = 'Major Final Output';
 
                 const majorFinalOutput = document.createElement('input');
                 majorFinalOutput.type = 'text';
                 majorFinalOutput.name = 'major_final_output';
                 majorFinalOutput.id = 'majorFinalOutput';
+                majorFinalOutput.className = 'input-layout';
 
-                const majorFinalOutputLabel = document.createElement('label');
-                majorFinalOutputLabel.textContent = 'Major Final Output';
+                mfoContainer.appendChild(majorFinalOutputLabel);
+                mfoContainer.appendChild(majorFinalOutput);
 
-                inputContainer.appendChild(majorFinalOutput);
-                labelContainer.appendChild(majorFinalOutputLabel);
+                const targetContainer = document.getElementById('create-target-container');
+                const accomplishedContainer = document.getElementById('create-accomplished-container');
 
                 for(let year = current_year; year <= end_year; year++)
                 {
                     const inputElement = document.createElement('input');
                     inputElement.type = 'text';
-                    inputElement.name = year;
-                    inputElement.id = year;
+                    inputElement.name = "target" + year;
+                    inputElement.id = "target" + year;
+                    inputElement.className = 'input-layout';
 
                     const labelElement = document.createElement('label');
-                    labelElement.textContent = year;
+                    labelElement.textContent = year + " Target";
 
-                    inputContainer.appendChild(inputElement);
-                    labelContainer.appendChild(labelElement);
+                    targetContainer.appendChild(labelElement);
+                    targetContainer.appendChild(inputElement);
+                }
+
+                for(let year = current_year; year <= end_year; year++)
+                {
+                    const inputElement = document.createElement('input');
+                    inputElement.type = 'text';
+                    inputElement.name = "accomplished" + year;
+                    inputElement.id = "accomplished" + year;
+                    inputElement.className = 'input-layout';
+
+                    const labelElement = document.createElement('label');
+                    labelElement.textContent = year + " Accomplished";
+
+                    accomplishedContainer.appendChild(labelElement);
+                    accomplishedContainer.appendChild(inputElement);
                 }
 
                 document.getElementById('createDialog').showModal();
@@ -261,33 +354,35 @@
                 updateForm.action = `/indicators/primary/${mfoID}/update`;
 
                 const inputContainer = document.getElementById('edit-input-container');
-                const labelContainer = document.getElementById('edit-label-container');
 
                 const majorFinalOutput = document.createElement('input');
                 majorFinalOutput.type = 'text';
                 majorFinalOutput.name = 'major_final_output';
                 majorFinalOutput.id = 'majorFinalOutput';
+                majorFinalOutput.className = 'input-layout';
                 majorFinalOutput.value = document.getElementById('mfo-' + id + "-" + counter).innerHTML.trim();
 
                 const majorFinalOutputLabel = document.createElement('label');
                 majorFinalOutputLabel.textContent = 'Major Final Output';
 
+                inputContainer.appendChild(majorFinalOutputLabel);
                 inputContainer.appendChild(majorFinalOutput);
-                labelContainer.appendChild(majorFinalOutputLabel);
 
                 for(let year = current_year; year <= end_year; year++)
                 {
-                    const inputElement = document.createElement('input');
-                    inputElement.type = 'text';
-                    inputElement.name = year;
-                    inputElement.id = year;
-                    inputElement.value = successIndicators["_" + year];
+                    const inputTarget = document.createElement('input');
+                    inputTarget.type = 'text';
+                    inputTarget.name = "target" + year;
+                    inputTarget.id = "target" + year;
+                    inputTarget.className = 'input-layout';
+                    inputTarget.value = successIndicators["target_" + year];
 
-                    const labelElement = document.createElement('label');
-                    labelElement.textContent = year;
 
+                    const labelTarget = document.createElement('label');
+                    labelTarget.textContent = year + "Target";
+
+                    inputContainer.appendChild(labelElement);
                     inputContainer.appendChild(inputElement);
-                    labelContainer.appendChild(labelElement);
                 }
 
                 document.getElementById('editDialog').showModal();
@@ -307,14 +402,14 @@
                 document.getElementById('commentSettings').showModal();
             }
 
-            function closeDialog(dialog, label, input) {
+            function closeDialog(dialog, input) {
+                event.preventDefault();
+
                 const dialogContainer = document.getElementById(dialog);
-                const labelContainer = document.getElementById(label);
                 const inputContainer = document.getElementById(input);
 
                 dialogContainer.close();
 
-                labelContainer.innerHTML = '';
                 inputContainer.innerHTML = '';
             }
         </script>

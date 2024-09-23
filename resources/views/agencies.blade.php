@@ -1,7 +1,58 @@
 <x-app-layout>
-    <button id="openCreateDialog" class="btn btn-primary">
-        Add New DOST Agency
-    </button>
+    <x-title-page>DOST Agencies</x-title-page>
+
+    <x-horizontal-line></x-horizontal-line>
+
+    <div class="options-container">
+        <div style="display: flex; gap: 30px;">
+            <div class="custom-dropdown">
+                <div class="dropdown-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">
+                    <span>Filter By</span>
+                    @include('svg.dropdown-icon')
+                </div>
+
+                <div class="dropdown-content" id="dropdown-content-id">
+                    <div class="dropdown-header">
+                        <span>Filter By</span>
+                        <div class="close-icon-container" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">@include('svg.close-icon')</div>
+                    </div>
+                    <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                        @csrf
+                        <div class="dropdown-main">
+                                @foreach ($selectFields as $classification => $allCategories)
+                                    <div class="input-container" style="margin-bottom: 1px;">
+                                        <label>{{ $selectLabels[$classification] }}</label>
+                                        <select class="select-input" id="{{ $classification }}_id" name="{{ $classification }}_id">
+                                            <option disabled selected>Select Option</option>
+                                            @foreach ($allCategories as $category)
+                                                <option value="{{ $category->id }}"><span class="option-span">{{ $category->title }}</span></option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                @endforeach
+                            <div class="line-container"></div>
+                        </div>
+                        <div class="dropdown-footer">
+                            <button type="submit" class="primary-button">Filter</button>
+                            <button type="button" class="secondary-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div>
+                <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                    @csrf
+                    <input type="text" class="input-search" name="search" placeholder="Search...">
+                </form>
+            </div>
+        </div>
+        <div>
+            <button class="manage-button" id="openCreateDialog">
+                @include('svg.gear-icon')
+                <span>Add DOST Agency</span>
+            </button>
+        </div>
+    </div>
 
     <table class="table-content">
         <thead>
@@ -34,63 +85,59 @@
     </table>
 
     <dialog id="createDialog">
-        <div class="dialog-container">
-            <form id="createForm" action="{{ route('agencies.store') }}" method="POST">
-                @csrf
-
-                <div class="form-container">
-                    <div class="label-container">
-                        @foreach ($formFields as $formField)
-                            <label for="{{ $formField['id'] }}">{{ $formField['label'] }}</label>
-                        @endforeach
-                    </div>
-
-                    <div class="input-container">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>Add DOST Agency</span>
+                <div class="close-icon-container" onclick="closeDialog('createDialog')">@include('svg.close-icon')</div>
+            </div>
+            <form method="POST" action="{{ route('agencies.store') }}" id="createForm">
+                <div class="modal-main">
+                    @csrf
+                    <div class="input-container" id="create-input-container">
                         @foreach ($formFields as $key => $formField)
-                            <input type="{{ $formField['type']}}" id="{{ $formField['id'] }}" name="{{ $key }}">
+                            <label for="{{ $formField['id'] }}">{{ $formField['label'] }}</label>
+                            <input type="{{ $formField['type']}}" id="{{ $formField['id'] }}" class="input-layout" name="{{ $key }}">
                         @endforeach
                     </div>
+                    <div class="line-container"></div>
                 </div>
-
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Create</button>
-                    <button type="button" id="closeCreateDialog" class="btn btn-secondary">Close</button>
+                    <button type="submit" class="primary-button">Save</button>
+                    <button class="secondary-button" onclick="closeDialog('createDialog')">Close</button>
                 </div>
             </form>
-        </div>
+            </div>
     </dialog>
 
-    <!-- Edit Dialog -->
     <dialog id="editDialog">
-        <div class="dialog-container">
-            <form id="editForm" method="POST">
-                @csrf
-                @method('PUT')
-
-                <div class="form-container">
-                    <div class="label-container">
-                        @foreach ($formFields as $formField)
-                            <label for="edit{{ $formField['id'] }}">{{ $formField['label'] }}</label>
-                        @endforeach
-                    </div>
-
-                    <div class="input-container">
+        <div class="modal-content" id="modal-content-id">
+            <div class="modal-header">
+                <span>Update DOST Agency</span>
+                <div class="close-icon-container" onclick="closeDialog('editDialog')">@include('svg.close-icon')</div>
+            </div>
+            <form method="POST" id="editForm">
+                <div class="modal-main">
+                    @csrf
+                    @method('PUT')
+                    <div class="input-container" id="create-input-container">
                         @foreach ($formFields as $key => $formField)
-                            <input type="{{ $formField['type']}}" id="edit_{{ $formField['id'] }}" name="{{ $key }}">
+                            <label for="edit{{ $formField['id'] }}">{{ $formField['label'] }}</label>
+                            <input type="{{ $formField['type']}}" class="input-layout" id="edit_{{ $formField['id'] }}" name="{{ $key }}">
                         @endforeach
                     </div>
-                </div>
-
-                <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Update</button>
-                    <button type="button" id="closeEditDialog" class="btn btn-secondary">Close</button>
+                    <div class="line-container"></div>
+                    <div style="display: flex; justify-content: flex-end;">
+                        <button type="submit" class="primary-button">Save</button>
+                    </div>
                 </div>
             </form>
-
             <form id="deleteForm" method="POST">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-danger">Delete</button>
+                <div class="modal-footer">
+                    <button type="submit" class="primary-button">Delete</button>
+                    <button class="secondary-button" onclick="closeDialog('editDialog')">Close</button>
+                </div>
             </form>
         </div>
     </dialog>
@@ -109,6 +156,13 @@
 
                 const deleteForm = document.getElementById('deleteForm');
                 deleteForm.action = `/agencies/${id}/delete`
+            }
+
+            function closeDialog(dialog) {
+                event.preventDefault();
+                const dialogContainer = document.getElementById(dialog);
+
+                dialogContainer.close();
             }
         </script>
     @endpush

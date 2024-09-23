@@ -12,8 +12,11 @@
         <link rel="stylesheet" href="{{ asset('css/layout-app.css') }}">
         <link rel="stylesheet" href="{{ asset('css/modal.css') }}">
         <link rel="stylesheet" href="{{ asset('css/navigation.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/sidebar.css') }}">
 
         <script defer src="{{ asset('js/app.js') }}"></script>
+
+        @stack('style')
     </head>
     <body>
         @include('layouts.navigation-draft')
