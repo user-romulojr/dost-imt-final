@@ -89,14 +89,10 @@
                 <th rowspan="2">Indicator</th>
                 <th rowspan="2">Major Final Output</th>
                 <th colspan="6" style="text-align: center;">Target</th>
-                <th colspan="6" style="text-align: center;">Accomplished</th>
                 <th rowspan="2">Comments</th>
                 <th rowspan="2">Action</th>
             </tr>
             <tr>
-                @foreach ($years as $year)
-                    <th>{{ $year }}</th>
-                @endforeach
                 @foreach ($years as $year)
                     <th>{{ $year }}</th>
                 @endforeach
@@ -131,14 +127,6 @@
                             <td id="row-{{ $counter }}-{{ $year }}">
                                 @if ($successIndicators->contains('year', $year))
                                     {{ $successIndicators->firstWhere('year', $year)->target }}
-                                @endif
-                            </td>
-                        @endforeach
-
-                        @foreach ($years as $year)
-                            <td id="row-{{ $counter }}-{{ $year }}">
-                                @if ($successIndicators->contains('year', $year))
-                                    {{ $successIndicators->firstWhere('year', $year)->accomplished }}
                                 @endif
                             </td>
                         @endforeach
@@ -192,10 +180,6 @@
                         <td></td>
                     @endforeach
 
-                    @foreach ($years as $year)
-                        <td></td>
-                    @endforeach
-
                     <td>
 
                     </td>
@@ -218,11 +202,7 @@
                 <div class="modal-main">
                     @csrf
                     <div class="input-container" id="create-input-container">
-                        <div id="create-mfo-container" style="margin-bottom: 10px;"></div>
-                        <div style="display: flex; gap: 25px">
-                            <div id="create-target-container"></div>
-                            <div id="create-accomplished-container"></div>
-                        </div>
+
                     </div>
                     <div class="line-container"></div>
                 </div>
@@ -297,9 +277,8 @@
 
             function openCreateDialog(id, current_year, end_year) {
                 const storeForm = document.getElementById('storeForm');
+                const inputContainer = document.getElementById('create-input-container');
                 storeForm.action = `/indicators/primary/${id}/store`;
-
-                const mfoContainer = document.getElementById('create-mfo-container');
 
                 const majorFinalOutputLabel = document.createElement('label');
                 majorFinalOutputLabel.textContent = 'Major Final Output';
@@ -310,40 +289,22 @@
                 majorFinalOutput.id = 'majorFinalOutput';
                 majorFinalOutput.className = 'input-layout';
 
-                mfoContainer.appendChild(majorFinalOutputLabel);
-                mfoContainer.appendChild(majorFinalOutput);
-
-                const targetContainer = document.getElementById('create-target-container');
-                const accomplishedContainer = document.getElementById('create-accomplished-container');
+                inputContainer.appendChild(majorFinalOutputLabel);
+                inputContainer.appendChild(majorFinalOutput);
 
                 for(let year = current_year; year <= end_year; year++)
                 {
                     const inputElement = document.createElement('input');
                     inputElement.type = 'text';
-                    inputElement.name = "target" + year;
-                    inputElement.id = "target" + year;
+                    inputElement.name = year;
+                    inputElement.id = year;
                     inputElement.className = 'input-layout';
 
                     const labelElement = document.createElement('label');
                     labelElement.textContent = year + " Target";
 
-                    targetContainer.appendChild(labelElement);
-                    targetContainer.appendChild(inputElement);
-                }
-
-                for(let year = current_year; year <= end_year; year++)
-                {
-                    const inputElement = document.createElement('input');
-                    inputElement.type = 'text';
-                    inputElement.name = "accomplished" + year;
-                    inputElement.id = "accomplished" + year;
-                    inputElement.className = 'input-layout';
-
-                    const labelElement = document.createElement('label');
-                    labelElement.textContent = year + " Accomplished";
-
-                    accomplishedContainer.appendChild(labelElement);
-                    accomplishedContainer.appendChild(inputElement);
+                    inputContainer.appendChild(labelElement);
+                    inputContainer.appendChild(inputElement);
                 }
 
                 document.getElementById('createDialog').showModal();
@@ -370,16 +331,16 @@
 
                 for(let year = current_year; year <= end_year; year++)
                 {
-                    const inputTarget = document.createElement('input');
-                    inputTarget.type = 'text';
-                    inputTarget.name = "target" + year;
-                    inputTarget.id = "target" + year;
-                    inputTarget.className = 'input-layout';
-                    inputTarget.value = successIndicators["target_" + year];
+                    const inputElement = document.createElement('input');
+                    inputElement.type = 'text';
+                    inputElement.name = year;
+                    inputElement.id = "edit" + year;
+                    inputElement.className = 'input-layout';
+                    inputElement.value = successIndicators["_" + year];
 
 
-                    const labelTarget = document.createElement('label');
-                    labelTarget.textContent = year + "Target";
+                    const labelElement = document.createElement('label');
+                    labelElement.textContent = year + " Target";
 
                     inputContainer.appendChild(labelElement);
                     inputContainer.appendChild(inputElement);

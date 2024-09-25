@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 return new class extends Migration
 {
@@ -13,17 +15,30 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('firstName');
-            $table->string('lastName');
+            $table->string('first_name');
+            $table->string('last_name');
             $table->foreignId('agency_id')->nullable()->constrained()->onDelete('set null');
             $table->string('email')->unique();
             $table->string('contact')->nullable();
-            $table->tinyInteger('role')->nullable()->default(6)->comment('1 : Executive | 2 : Planning Director | 3 : Planning Officer | 4 : Agency Head | 5 : Agency Focal | 6 : User');
+            $table->foreignId('access_level_id')->constrained();
             $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('privacy_consent')->default(false);
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
+
+        DB::table('users')->insert([
+            [
+                'first_name' => 'DOST',
+                'last_name' => 'Executive',
+                'email' => 'executive@dost.gov.ph',
+                'access_level_id' => '1',
+                'password' => Hash::make('Executiv3'),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -39,6 +54,8 @@ return new class extends Migration
             $table->longText('payload');
             $table->integer('last_activity')->index();
         });
+
+
     }
 
     /**

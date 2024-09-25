@@ -8,20 +8,16 @@ function toggleProfileDropdown() {
     }
 }
 
-
-// Open Create User Dialog
 document.getElementById('openCreateDialog').addEventListener('click', function() {
     document.getElementById('createDialog').showModal();
 });
 
 
-// Close Create User Dialog
 document.getElementById('closeCreateDialog').addEventListener('click', function() {
     document.getElementById('createDialog').close();
 });
 
 
-// Close Edit User Dialog
 document.getElementById('closeEditDialog').addEventListener('click', function() {
     document.getElementById('editDialog').close();
 });
@@ -59,4 +55,15 @@ function collapseSidebar() {
         sidebar.style.padding = "0";
         collapse_icon.style.transform = "rotate(180deg)";
     }
+}
+
+
+function setDefault(formFields){
+    document.getElementById('dropdown-content-id').display = "none";
+
+    formFields.forEach(function(formField) {
+        document.getElementById("filter_" + formField + "_id").selectedIndex = 0;
+    });
+    
+    //document.getElementById("filter_search_id").value = document.getElementById("search").value;
 }

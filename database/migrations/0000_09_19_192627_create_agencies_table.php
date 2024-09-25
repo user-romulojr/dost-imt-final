@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('agency');
             $table->string('acronym');
-            $table->string('group')->nullable();
+            $table->foreignId('agency_group_id')->nullable()->constrained();
             $table->string('contact')->nullable();
             $table->string('website')->nullable();
             $table->timestamps();

@@ -16,20 +16,18 @@
                         <span>Filter By</span>
                         <div class="close-icon-container" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">@include('svg.close-icon')</div>
                     </div>
-                    <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                    <form action="{{ route('agencies.index')}}" method="GET">
                         @csrf
                         <div class="dropdown-main">
-                                @foreach ($selectFields as $classification => $allCategories)
-                                    <div class="input-container" style="margin-bottom: 1px;">
-                                        <label>{{ $selectLabels[$classification] }}</label>
-                                        <select class="select-input" id="{{ $classification }}_id" name="{{ $classification }}_id">
-                                            <option disabled selected>Select Option</option>
-                                            @foreach ($allCategories as $category)
-                                                <option value="{{ $category->id }}"><span class="option-span">{{ $category->title }}</span></option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                @endforeach
+                                <div class="input-container" style="margin-bottom: 1px;">
+                                    <label>Agency Group</label>
+                                    <select class="select-input" id="agency_group_id" name="agency_group_id">
+                                        <option disabled selected>Select Option</option>
+                                        @foreach ($agencyGroups as $agencyGroup)
+                                            <option value="{{ $agencyGroup->id }}">{{ $agencyGroup->title }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             <div class="line-container"></div>
                         </div>
                         <div class="dropdown-footer">
@@ -40,7 +38,7 @@
                 </div>
             </div>
             <div>
-                <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                <form action="{{ route('agencies.index')}}" method="GET">
                     @csrf
                     <input type="text" class="input-search" name="search" placeholder="Search...">
                 </form>
@@ -48,7 +46,6 @@
         </div>
         <div>
             <button class="manage-button" id="openCreateDialog">
-                @include('svg.gear-icon')
                 <span>Add DOST Agency</span>
             </button>
         </div>
@@ -70,13 +67,13 @@
                     '{{ $agency->id }}',
                     '{{ $agency->agency }}',
                     '{{ $agency->acronym }}',
-                    '{{ $agency->group }}',
+                    '{{ isset($agency->agencyGroup) ? $agency->agencyGroup->id : '' }}',
                     '{{ $agency->contact }}',
                     '{{ $agency->website }}',
                 )" style="cursor: pointer;">
                     <td>{{ $agency->agency }}</td>
                     <td>{{ $agency->acronym }}</td>
-                    <td>{{ $agency->group }}</td>
+                    <td>{{ isset($agency->agencyGroup) ? $agency->agencyGroup->title : '' }}</td>
                     <td>{{ $agency->contact }}</td>
                     <td>{{ $agency->website }}</td>
                 </tr>
@@ -94,10 +91,35 @@
                 <div class="modal-main">
                     @csrf
                     <div class="input-container" id="create-input-container">
-                        @foreach ($formFields as $key => $formField)
-                            <label for="{{ $formField['id'] }}">{{ $formField['label'] }}</label>
-                            <input type="{{ $formField['type']}}" id="{{ $formField['id'] }}" class="input-layout" name="{{ $key }}">
-                        @endforeach
+                        <div>
+                            <label for="agency">Agency</label>
+                            <input type="text" id="agency" class="input-layout" name="agency">
+                        </div>
+
+                        <div>
+                            <label for="acronym">Acronym</label>
+                            <input type="text" id="acronym" class="input-layout" name="acronym">
+                        </div>
+
+                        <div>
+                            <label>Agency Group</label>
+                            <select class="select-input" id="agency_group_id" name="agency_group_id">
+                                <option disabled selected>Select Option</option>
+                                @foreach ($agencyGroups as $agencyGroup)
+                                    <option value="{{ $agencyGroup->id }}">{{ $agencyGroup->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="contact">Contact</label>
+                            <input type="text" id="contact" class="input-layout" name="contact">
+                        </div>
+
+                        <div>
+                            <label for="website">Website</label>
+                            <input type="text" id="website" class="input-layout" name="website">
+                        </div>
                     </div>
                     <div class="line-container"></div>
                 </div>

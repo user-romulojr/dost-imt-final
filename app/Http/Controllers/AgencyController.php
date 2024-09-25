@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Agency;
 
 use App\Http\Controllers\Controller;
+use App\Models\AgencyGroup;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -18,17 +19,12 @@ class AgencyController extends Controller
         'website' => ['id' => 'website', 'type' => 'text', 'label' => 'Website'],
     ];
 
-    public $selectLabels = [
-        'agency_group' => 'Agency Group',
-    ];
 
     public function index() {
         $agencies = Agency::all();
-        $selectFields = [
-            'agency_group' => [],
-        ];
+        $agencyGroups = AgencyGroup::all();
 
-        return view('agencies', ['agencies' => $agencies, 'formFields' => $this->formFields, 'selectLabels' => $this->selectLabels, 'selectFields' => $selectFields]);
+        return view('agencies', ['agencies' => $agencies, 'formFields' => $this->formFields, 'agencyGroups' => $agencyGroups]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -36,12 +32,15 @@ class AgencyController extends Controller
         $data = $request->validate([
             'agency' => 'required',
             'acronym' => 'required',
+            'agency_group_id' => 'nullable',
+            'contact' => 'nullable',
+            'website' => 'nullable',
         ]);
 
         Agency::create([
             'agency' => $request->agency,
             'acronym' => $request->acronym,
-            'group' => $request->group,
+            'agency_group_id' => $request->agency_group_id,
             'contact' => $request->contact,
             'website' => $request->website,
         ]);

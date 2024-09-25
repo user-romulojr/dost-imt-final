@@ -14,16 +14,6 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    public $accessLevel = [
-        '1' => 'executive',
-        '2' => 'planning-director',
-        '3' => 'planning-officer',
-        '4' => 'agency-head',
-        '5' => 'agency-focal',
-        '6' => 'view-only',
-    ];
-
-
     public function indicators(): BelongsToMany
     {
         return $this->belongsToMany(Indicator::class);
@@ -39,18 +29,24 @@ class User extends Authenticatable
         return $this->belongsTo(Agency::class);
     }
 
+    public function accessLevel(): BelongsTo
+    {
+        return $this->belongsTo(AccessLevel::class);
+    }
+
+
     /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'firstName',
-        'lastName',
+        'first_name',
+        'last_name',
         'agency_id',
         'email',
         'contact',
-        'role',
+        'access_level_id',
         'password',
     ];
 

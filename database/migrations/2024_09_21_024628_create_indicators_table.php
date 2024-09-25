@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignId('sdg_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('strategic_pillar_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('thematic_area_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('indicator_status_id')->default('1')->constrained(table: 'indicator_statuses');
             $table->timestamps();
         });
     }

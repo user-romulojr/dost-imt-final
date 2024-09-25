@@ -273,7 +273,7 @@
     min-width: 75px;
     color: white;
     border-radius: 8px;
-    padding: 2px;
+    padding: 8px;
     border: 1px solid #0d4e86;
     cursor: pointer;
     box-sizing: border-box;
@@ -298,6 +298,7 @@
     border-radius: 5px;
     width: 100%;
     font-size: 12px;
+    cursor: pointer;
 }
 
 .input-layout {
