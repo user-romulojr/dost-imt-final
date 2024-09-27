@@ -34,6 +34,10 @@ class User extends Authenticatable
         return $this->belongsTo(AccessLevel::class);
     }
 
+    public function isAdmin()
+    {
+        return ($this->access_level_id >= 2 && $this->access_level_id <= 4);
+    }
 
     /**
      * The attributes that are mass assignable.

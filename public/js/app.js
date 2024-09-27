@@ -64,6 +64,6 @@ function setDefault(formFields){
     formFields.forEach(function(formField) {
         document.getElementById("filter_" + formField + "_id").selectedIndex = 0;
     });
-    
-    //document.getElementById("filter_search_id").value = document.getElementById("search").value;
 }
+
+

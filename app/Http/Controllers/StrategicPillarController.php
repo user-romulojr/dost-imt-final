@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Route;
+
 class StrategicPillarController extends Controller
 {
     public $formFields = [
@@ -15,6 +17,9 @@ class StrategicPillarController extends Controller
     ];
 
     public function index(Request $request) {
+        $currentRoute = Route::currentRouteName() ?? $request->path();
+        $request->session()->put('previous_route', $currentRoute);
+        
         $query = StrategicPillar::query();
 
         $search = $request->input('search');

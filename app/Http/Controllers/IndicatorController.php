@@ -13,6 +13,8 @@ use App\Models\ThematicArea;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 
+use Illuminate\Support\Facades\Route;
+
 class IndicatorController extends Controller
 {
     public $formFields = [
@@ -29,6 +31,14 @@ class IndicatorController extends Controller
         'thematic_area' => 'Thematic Area',
     ];
 
+    public $filterFields = [
+        'hnrda',
+        'priority',
+        'sdg',
+        'strategic_pillar',
+        'thematic_area',
+    ];
+
     public function index(Request $request)
     {
         $selectFields = [
@@ -39,38 +49,52 @@ class IndicatorController extends Controller
             'thematic_area' => ThematicArea::all(),
         ];
 
+        $currentRoute = Route::currentRouteName() ?? $request->path();
+        if($request->session()->has("previous_route") && $request->session()->get("previous_route") != $currentRoute){
+            foreach($this->filterFields as $filterField){
+                session()->forget("filter_" . $filterField . "_id");
+            }
+            session()->forget(['filter_search', 'filter_sort']);
+        }
+        $request->session()->put('previous_route', $currentRoute);
+
         $query = Indicator::query();
 
-        if($request->has('hnrda_id')){
-            $query->where('hnrda_id', $request->input('hnrda_id'));
+        if($request->filter == "category"){
+            foreach($this->filterFields as $filterField){
+                $request->session()->put("filter_" . $filterField . "_id", $request->input("filter_" . $filterField . "_id"));
+            }
+        } elseif($request->filter == "search"){
+            $request->session()->put('filter_search', $request->input("filter_search"));
+        } elseif($request->filter == "sort"){
+            $request->session()->put('filter_sort', $request->input("filter_sort"));
         }
 
-        if($request->has('priority_id')){
-            $query->where('priority_id', $request->input('priority_id'));
+        foreach($this->filterFields as $filterField){
+            if($request->session()->has("filter_" . $filterField . "_id")){
+                $query->where($filterField . "_id", $request->session()->get("filter_" . $filterField . "_id"));
+            }
         }
 
-        if($request->has('sdg_id')){
-            $query->where('sdg_id', $request->input('sdg_id'));
-        }
-
-        if($request->has('strategic_pillar_id')){
-            $query->where('strategic_pillar_id', $request->input('strategic_pillar_id'));
-        }
-
-        if($request->has('thematic_area_id')){
-            $query->where('thematic_area_id', $request->input('thematic_area_id'));
-        }
-
-        $search = $request->input('search');
+        $search = $request->session()->get('filter_search');
         if ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('indicator', 'like', '%' . $search . '%');
             });
         }
 
+        if($request->session()->has("filter_sort")){
+            $query->orderBy('indicator', $request->session()->get('filter_sort'));
+        }
+
         $indicators = $query->get();
 
-        return view('indicators', ['indicators' => $indicators, 'formFields' => $this->formFields, 'selectFields' => $selectFields, 'selectLabels' => $this->selectLabels]);
+        return view('indicators', ['indicators' => $indicators,
+                                    'formFields' => $this->formFields,
+                                    'selectFields' => $selectFields,
+                                    'selectLabels' => $this->selectLabels,
+                                    'filterFields' => $this->filterFields,
+                                ]);
     }
 
     public function store(Request $request): RedirectResponse

@@ -41,6 +41,13 @@ Route::middleware('auth')->group(function () {
     Route::put('/indicators/primary/{id}/update', [PrimaryIndicatorController::class, 'update'])->name('primaryIndicators.update');
     Route::delete('/indicators/primary/{id}/delete', [PrimaryIndicatorController::class, 'destroy'])->name('primaryIndicators.destroy');
     Route::post('/indicators/primary/select', [PrimaryIndicatorController::class, 'select'])->name('primaryIndicators.select');
+    Route::post('/indicators/primary/submit', [PrimaryIndicatorController::class, 'submit'])->name('primaryIndicators.submit');
+    Route::post('/indicators/primary/approve/{id}', [PrimaryIndicatorController::class, 'approve'])->name('primaryIndicators.approve');
+    Route::post('/indicators/primary/disapprove/{id}', [PrimaryIndicatorController::class, 'disapprove'])->name('primaryIndicators.disapprove');
+    Route::get('/indicators/primary/{id}/pending', [PrimaryIndicatorController::class, 'pending'])->name('primaryIndicators.pending');
+    Route::get('/indicators/primary/approved', [PrimaryIndicatorController::class, 'approved'])->name('primaryIndicators.approved');
+    Route::get('/indicators/primary/pending/admin', [PrimaryIndicatorController::class, 'pendingAdmin'])->name('primaryIndicators.pendingAdmin');
+    Route::get('/indicators/primary/approved/admin', [PrimaryIndicatorController::class, 'approvedAdmin'])->name('primaryIndicators.approvedAdmin');
 
     Route::post('/comment/{id}/store', [CommentController::class, 'store'])->name('comment.store');
     Route::put('/comment/{id}/update', [CommentController::class, 'update'])->name('comment.update');
@@ -75,6 +82,16 @@ Route::middleware('auth')->group(function () {
     Route::post('/areas', [ThematicAreaController::class, 'store'])->name('areas.store');
     Route::put('/areas/{id}/update', [ThematicAreaController::class, 'update'])->name('areas.update');
     Route::delete('/areas/{id}/delete', [ThematicAreaController::class, 'destroy'])->name('areas.destroy');
+
+    Route::post('/store-indicators-dropdown-state', function (Illuminate\Http\Request $request) {
+        session(['indicators_dropdown_open' => $request->input('open')]);
+        return response()->json(['status' => 'success']);
+    })->name('store.indicators.dropdown.state');
+
+    Route::post('/store-library-dropdown-state', function (Illuminate\Http\Request $request) {
+        session(['library_dropdown_open' => $request->input('open')]);
+        return response()->json(['status' => 'success']);
+    })->name('store.library.dropdown.state');
 });
 
 require __DIR__.'/auth.php';

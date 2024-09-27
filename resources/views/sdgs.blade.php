@@ -47,7 +47,7 @@
                 <span>Add SDG</span>
                 <div class="close-icon-container" onclick="closeDialog('createDialog')">@include('svg.close-icon')</div>
             </div>
-            <form method="POST" action="{{ route('pillars.store') }}" id="createForm">
+            <form method="POST" action="{{ route('sdgs.store') }}" id="createForm">
                 @csrf
                 <div class="modal-main">
                     @foreach ($formFields as $key => $formField)

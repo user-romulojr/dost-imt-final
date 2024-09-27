@@ -76,7 +76,19 @@
     <table class="table-content">
         <thead>
             <tr>
-                <th>Name</th>
+                <th>
+                    <form action="{{ route('users.index') }}" method="GET">
+                        @csrf
+                        <input type="hidden" name="filter_sort" value="{{ session('filter_sort') === 'asc' ? 'desc' : 'asc' }}">
+                        <input type="hidden" name="filter" value="sort">
+                        <button type="submit" class="remove-default-btn">
+                            <div class="sort-container">
+                                <span>Name</span>
+                                <div>@include('svg.sort-icon')</div>
+                            </div>
+                        </button>
+                    </form>
+                </th>
                 <th>Agency</th>
                 <th>Email</th>
                 <th>Contact</th>

@@ -22,18 +22,32 @@
                                 @foreach ($selectFields as $classification => $allCategories)
                                     <div class="input-container" style="margin-bottom: 1px;">
                                         <label>{{ $selectLabels[$classification] }}</label>
-                                        <select class="select-input" id="{{ $classification }}_id" name="{{ $classification }}_id">
+                                        <select class="select-input" id="filter_{{ $classification }}_id" name="filter_{{ $classification }}_id">
                                             <option disabled selected>Select Option</option>
                                             @foreach ($allCategories as $category)
-                                                <option value="{{ $category->id }}"><span class="option-span">{{ $category->title }}</span></option>
+                                                <option value="{{ $category->id }}"
+                                                    {{ session("filter_" . $classification . "_id") == $category->id  ? 'selected' : '' }}
+                                                >
+                                                    {{ $category->title }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 @endforeach
-                            <div class="line-container"></div>
+                                <input type="hidden" name="filter" value="category">
+                                <div class="line-container"></div>
+                                <div style="display: flex; justify-content: flex-end;">
+                                    <button type="submit" class="primary-button">Filter</button>
+                                </div>
                         </div>
                         <div class="dropdown-footer">
-                            <button type="submit" class="primary-button">Filter</button>
+                            <button type="submit" onclick="setDefault([
+                                @foreach ($filterFields as $filterField)
+                                    '{{ $filterField }}',
+                                @endforeach
+                            ])" class="secondary-button">
+                                Set to Default
+                            </button>
                             <button type="button" class="secondary-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">Close</button>
                         </div>
                     </form>
@@ -42,13 +56,13 @@
             <div>
                 <form action="{{ route('indicators.index')}}" method="GET">
                     @csrf
-                    <input type="text" class="input-search" name="search" placeholder="Search...">
+                    <input type="hidden" name="filter" value="search">
+                    <input type="text" class="input-search" name="filter_search" value="{{ session('filter_search') }}" placeholder="Search...">
                 </form>
             </div>
         </div>
         <div>
             <button class="manage-button" id="openCreateDialog">
-                @include('svg.gear-icon')
                 <span>Add Primary Indicator</span>
             </button>
         </div>

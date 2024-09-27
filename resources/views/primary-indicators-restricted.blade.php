@@ -14,7 +14,7 @@
                     </div>
                 @endif
                 <div>
-                    <form action="{{ route('primaryIndicators.pending', [ 'id' => auth()->user()->id, ]) }}" method="GET">
+                    <form action="{{ auth()->user()->isAdmin() ? route('primaryIndicators.pendingAdmin') : route('primaryIndicators.pending' , [ 'id' => auth()->user()->id, ]) }}" method="GET">
                         <button type="submit" class="secondary-button">Pending</button>
                     </form>
                 </div>
@@ -70,11 +70,6 @@
                 </form>
             </div>
         </div>
-        <div>
-            <button class="manage-button" onclick="openSelectDialog()">
-                <span>Manage Indicator</span>
-            </button>
-        </div>
     </div>
 
     <dialog id="selectDialog">
@@ -114,7 +109,6 @@
                 <th rowspan="2">Major Final Output</th>
                 <th colspan="6" style="text-align: center;">Target</th>
                 <th rowspan="2">Comments</th>
-                <th rowspan="2">Action</th>
             </tr>
             <tr>
                 @foreach ($years as $year)
@@ -173,22 +167,6 @@
                                 <input type="text" name="comment" class="input-comment" placeholder="Add comment">
                             </form>
                         </td>
-
-                        <td>
-                            <form action="{{ route('primaryIndicators.destroy', ['id' => $majorFinalOutput->id ]) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="button-action" style="margin-bottom: 5px;">–</button>
-                            </form>
-                            <button class="button-action" onclick="openEditDialog({{ $displayedIndicator->id }}, {{ $majorFinalOutput->id }}, {{ $counter }},
-                                {{ $currentYear }}, {{ $displayedIndicator->end_year }},
-                                 {
-                                    @for ($year = $currentYear; $year <= $displayedIndicator->end_year; $year++)
-                                       '_{{ $year }}': '{{ $successIndicators->firstWhere('year', $year)->target ??  '' }}',
-                                    @endfor
-                                 })"
-                                    style="cursor: pointer;">/</button>
-                        </td>
                     </tr>
                 @endforeach
 
@@ -210,24 +188,28 @@
                     <td>
 
                     </td>
-
-                    <td>
-                        <button class="button-action" onclick="openCreateDialog({{ $displayedIndicator->id }}, {{ $currentYear }}, {{ $displayedIndicator->end_year }})">+</button>
-                    </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
     </div>
-    </div>
 
-    <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-        <form action="{{ route('primaryIndicators.submit') }}" method="POST">
-            @csrf
-            <button type="submit" class="primary-button">Submit for Approval</button>
-        </form>
+    @if(auth()->user()->isAdmin())
+    <div style="display: flex; justify-content: flex-end; margin-top: 30px; gap: 10px;">
+        <div>
+            <form action="{{ route('primaryIndicators.disapprove', ['id' => $userID]) }}" method="POST">
+                @csrf
+                <button type="submit" class="secondary-button">Disapprove</button>
+            </form>
+        </div>
+        <div>
+            <form action="{{ route('primaryIndicators.approve', ['id' => $userID]) }}" method="POST">
+                @csrf
+                <button type="submit" class="primary-button">Approve</button>
+            </form>
+        </div>
     </div>
-
+    @endif
 
     <dialog id="createDialog">
         <div class="modal-content" id="modal-content-id">

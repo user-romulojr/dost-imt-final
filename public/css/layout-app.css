@@ -23,6 +23,7 @@
     flex-direction: column;
     width: 83.8vw;
     height: 90vh;
+    overflow-y: auto;
     padding: 20px;
     padding-left: 35px;
 }
@@ -368,4 +369,77 @@
     gap: 10px;
     padding: 15px;
     padding-top: 0;
+}
+
+.svg-sort {
+    height: 10px;
+    width: auto;
+}
+
+.sort-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+.remove-default-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    text-align: inherit;
+    text-transform: none;
+    line-height: inherit;
+    cursor: pointer;
+    outline: none;
+    box-sizing: border-box;
+    text-transform: uppercase;
+}
+
+/* SCROLL */
+.main-content::-webkit-scrollbar {
+    width: 12px;
+}
+
+.table-container::-webkit-scrollbar {
+    width: 7px;
+}
+
+/* Track */
+.main-content::-webkit-scrollbar-track, .table-container::-webkit-scrollbar-track {
+    background: white;
+}
+
+/* Handle */
+.main-content::-webkit-scrollbar-thumb, .table-container::-webkit-scrollbar-thumb {
+    background-color: #b2b2b2;
+    border-radius: 10px;
+}
+
+/*
+.table-container {
+    height: 20vh;
+    overflow-y: auto;
+}
+    */
+
+
+.table-container {
+    max-height: 53vh;
+    overflow-y: auto;
+    border-bottom: 1px solid #CBCBCB;
+}
+
+thead {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+
+tbody {
+    display: table;
+    width: 100%;
 }

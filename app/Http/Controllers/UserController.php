@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 
+use Illuminate\Support\Facades\Route;
+
 class UserController extends Controller
 {
     public $formFields = [
@@ -35,12 +37,23 @@ class UserController extends Controller
         $agencies = Agency::all();
         $accessLevels = AccessLevel::all();
 
+        $currentRoute = Route::currentRouteName() ?? $request->path();
+        if($request->session()->has("previous_route") && $request->session()->get("previous_route") != $currentRoute){
+            foreach($this->filterFields as $filterField){
+                session()->forget("filter_" . $filterField . "_id");
+            }
+            session()->forget(['filter_search', 'filter_sort']);
+        }
+        $request->session()->put('previous_route', $currentRoute);
+
         if($request->filter == "category"){
             foreach($this->filterFields as $filterField){
                 $request->session()->put("filter_" . $filterField . "_id", $request->input("filter_" . $filterField . "_id"));
             }
         } elseif($request->filter == "search"){
             $request->session()->put('filter_search', $request->input("filter_search"));
+        } elseif($request->filter == "sort"){
+            $request->session()->put('filter_sort', $request->input("filter_sort"));
         }
 
         $query = User::query();
@@ -56,6 +69,10 @@ class UserController extends Controller
                 $q->where('first_name', 'like', '%' . $search . '%')
                     ->orWhere('last_name', 'LIKE', "%{$search}%");
             });
+        }
+
+        if($request->session()->has("filter_sort")){
+            $query->orderBy('last_name', $request->session()->get('filter_sort'));
         }
 
         $users = $query->get();

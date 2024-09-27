@@ -57,4 +57,9 @@ class Indicator extends Model
     {
         return $this->belongsTo(ThematicArea::class);
     }
+
+    public function indicatorStatus(): BelongsTo
+    {
+        return $this->belongsTo(IndicatorStatus::class);
+    }
 }

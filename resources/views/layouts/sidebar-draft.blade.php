@@ -11,7 +11,7 @@
                     </div>
                 </div>
 
-                <button class="button-library" onclick="toggleContent('indicators-content', 'indicators-dropdown')">
+                <button class="button-library" id="indicators-dropdown">
                     <div class="list-library-container">
                         <div class="library-icon-container">
                             @include('svg.indicators-icon')
@@ -19,7 +19,7 @@
                         <div class="action-library-container">
                             Indicators
                         </div>
-                        <div id="indicators-dropdown" class="dropdown-icon-container">
+                        <div id="indicators-dropdown-icon" class="dropdown-icon-container">
                             @include('svg.dropdown-icon')
                         </div>
                     </div>
@@ -27,13 +27,18 @@
 
                 @php
                     $indicatorsContent = [
-                        'Primary Indicators' => '/indicators/primary',
                         'Secondary Indicators' => '/indicators/secondary',
                     ];
                 @endphp
 
                 <div id="indicators-content" class="sublibrary-container">
                     <ul>
+                        <div class="list-item-container">
+                            <div class="hyphen-container">
+                                <div class="circle"></div>
+                            </div>
+                            <li><a href={{ auth()->user()->isAdmin() ? route('primaryIndicators.pendingAdmin') : route('primaryIndicators.index') }}>Primary Indicators</a></li>
+                        </div>
                         @foreach ($indicatorsContent as $label => $action)
                         <div class="list-item-container">
                             <div class="hyphen-container">
@@ -45,7 +50,7 @@
                     </ul>
                 </div>
 
-                <button class="button-library" onclick="toggleContent('library-content', 'library-dropdown')">
+                <button class="button-library" id="library-dropdown">
                     <div class="list-library-container">
                         <div class="library-icon-container">
                             @include('svg.library-icon')
@@ -53,7 +58,7 @@
                         <div class="action-library-container">
                             Library
                         </div>
-                        <div id="library-dropdown" class="dropdown-icon-container">
+                        <div id="library-dropdown-icon" class="dropdown-icon-container">
                             @include('svg.dropdown-icon')
                         </div>
                     </div>

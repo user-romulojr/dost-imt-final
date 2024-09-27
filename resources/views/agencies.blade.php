@@ -19,19 +19,27 @@
                     <form action="{{ route('agencies.index')}}" method="GET">
                         @csrf
                         <div class="dropdown-main">
-                                <div class="input-container" style="margin-bottom: 1px;">
-                                    <label>Agency Group</label>
-                                    <select class="select-input" id="agency_group_id" name="agency_group_id">
-                                        <option disabled selected>Select Option</option>
-                                        @foreach ($agencyGroups as $agencyGroup)
-                                            <option value="{{ $agencyGroup->id }}">{{ $agencyGroup->title }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            <div class="input-container" style="margin-bottom: 1px;">
+                                <label>Agency Group</label>
+                                <select class="select-input" id="filter_agency_group_id" name="filter_agency_group_id">
+                                    <option disabled selected>Select Option</option>
+                                    @foreach ($agencyGroups as $agencyGroup)
+                                        <option value="{{ $agencyGroup->id }}"
+                                                {{ session('filter_agency_group_id') == $agencyGroup->id  ? 'selected' : '' }}
+                                        >
+                                            {{ $agencyGroup->title }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <input type="hidden" name="filter" value="category">
                             <div class="line-container"></div>
+                                <div style="display: flex; justify-content: flex-end;">
+                                    <button type="submit" class="primary-button">Filter</button>
+                                </div>
                         </div>
                         <div class="dropdown-footer">
-                            <button type="submit" class="primary-button">Filter</button>
+                            <button type="submit" onclick="setDefault(['agency_group'])" class="secondary-button">Set to Default</button>
                             <button type="button" class="secondary-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">Close</button>
                         </div>
                     </form>
@@ -40,7 +48,8 @@
             <div>
                 <form action="{{ route('agencies.index')}}" method="GET">
                     @csrf
-                    <input type="text" class="input-search" name="search" placeholder="Search...">
+                    <input type="hidden" name="filter" value="search">
+                    <input type="text" class="input-search" name="filter_search" value="{{ session('filter_search') }}" placeholder="Search...">
                 </form>
             </div>
         </div>
