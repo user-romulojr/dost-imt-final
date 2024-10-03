@@ -15,6 +15,7 @@ class Indicator extends Model
     protected $fillable = [
         'indicator',
         'operational_definition',
+        'is_primary',
         'end_year',
         'hnrda_id',
         'priority_id',
@@ -61,5 +62,10 @@ class Indicator extends Model
     public function indicatorStatus(): BelongsTo
     {
         return $this->belongsTo(IndicatorStatus::class);
+    }
+
+    public function indicatorsGroup(): BelongsTo
+    {
+        return $this->belongsTo(IndicatorsGroup::class);
     }
 }

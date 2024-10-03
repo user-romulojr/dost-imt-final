@@ -21,7 +21,7 @@ return new class extends Migration
         DB::table('access_levels')->insert([
             ['title' => 'Executive', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'Planning Director', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Planning Officer', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'System Administrator', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'Agency Head', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'Agency Focal', 'created_at' => now(), 'updated_at' => now()],
         ]);

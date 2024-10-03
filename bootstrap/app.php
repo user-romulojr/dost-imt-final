@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Middleware\AllowLibraryAccess;
+use App\Http\Middleware\CanApproveIndicators;
+use App\Http\Middleware\CanSubmitIndicators;
 use App\Http\Middleware\ClearSessionData;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -12,7 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        //
+        $middleware->alias([
+            'library' => AllowLibraryAccess::class,
+            'submit' => CanSubmitIndicators::class,
+            'approve' => CanApproveIndicators::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

@@ -443,3 +443,37 @@ tbody {
     display: table;
     width: 100%;
 }
+
+.extend-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 5px;
+    margin-right: 0;
+}
+
+.extend-arrow-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+    width: 12px;
+}
+
+.special-table {
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 12px;
+}
+
+.special-table th, .special-table td {
+    border: none;
+    margin: 0;
+    padding: 5px;
+}
+
+.special-table th {
+    background-color: rgba(13, 78, 134, 0.15);
+    font-weight: normal;
+    text-transform: uppercase;
+}

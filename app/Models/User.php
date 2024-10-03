@@ -14,6 +14,12 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    const ROLE_EXEC = 1;
+    const ROLE_PD = 2;
+    const ROLE_SA = 3;
+    const ROLE_AH = 4;
+    const ROLE_AF = 5;
+
     public function indicators(): BelongsToMany
     {
         return $this->belongsToMany(Indicator::class);
@@ -34,9 +40,14 @@ class User extends Authenticatable
         return $this->belongsTo(AccessLevel::class);
     }
 
+    public function indicatorsGroups(): HasMany
+    {
+        return $this->hasMany(IndicatorsGroup::class);
+    }
+
     public function isAdmin()
     {
-        return ($this->access_level_id >= 2 && $this->access_level_id <= 4);
+        return in_array($this->access_level_id, [User::ROLE_AH, User::ROLE_PD, User::ROLE_EXEC, ]);
     }
 
     /**

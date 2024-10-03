@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-title-page>Primary Indicators</x-title-page>
+    <x-title-page>Secondary Indicators</x-title-page>
 
     <x-horizontal-line></x-horizontal-line>
 
@@ -7,12 +7,12 @@
         <div style="display: flex; gap: 30px;">
             <div style="display: flex; gap: 10px;">
                 <div>
-                    <form action="{{ route('primaryIndicators.index') }}" method="GET">
+                    <form action="{{ route('secondaryIndicators.index') }}" method="GET">
                         <button type="submit" class="secondary-button">Draft</button>
                     </form>
                 </div>
                 <div>
-                    <form action="{{ route('primaryIndicators.approved') }}" method="GET">
+                    <form action="{{ route('secondaryIndicators.approved') }}" method="GET">
                         <button type="submit" class="secondary-button">Approved</button>
                     </form>
                 </div>
@@ -28,7 +28,7 @@
                         <span>Filter By</span>
                         <div class="close-icon-container" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">@include('svg.close-icon')</div>
                     </div>
-                    <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                    <form action="{{ route('secondaryIndicators.index')}}" method="GET">
                         @csrf
                         <div class="dropdown-main">
                                 @foreach ($selectFields as $classification => $allCategories)
@@ -66,32 +66,32 @@
                 </div>
             </div>
             <div>
-                <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                <form action="{{ route('secondaryIndicators.index')}}" method="GET">
                     @csrf
                     <input type="hidden" name="filter" value="search">
                     <input type="text" class="input-search" name="filter_search" value="{{ session('filter_search') }}" placeholder="Search...">
                 </form>
             </div>
         </div>
-            @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                <div>
-                    <button class="manage-button" onclick="openSelectDialog()">
-                        <span>Manage Indicator</span>
-                    </button>
-                </div>
-            @endif
-
+        @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
             <div>
-                @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                    For Approval
-                @elseif ($selectedDraftIndicators[0]->indicator_status_id == '2')
-                    Focal Head Reviewing
-                @elseif ($selectedDraftIndicators[0]->indicator_status_id == '3')
-                    Planning Director Reviewing
-                @elseif ($selectedDraftIndicators[0]->indicator_status_id == '4')
-                    Executive Final Approval
-                @endif
+                <button class="manage-button" onclick="openSelectDialog()">
+                    <span>Manage Indicator</span>
+                </button>
             </div>
+        @endif
+
+        <div>
+        @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
+            For Approval
+        @elseif ($selectedDraftIndicators[0]->indicator_status_id == '2')
+            Focal Head Reviewing
+        @elseif ($selectedDraftIndicators[0]->indicator_status_id == '3')
+            Planning Director Reviewing
+        @elseif ($selectedDraftIndicators[0]->indicator_status_id == '4')
+            Executive Final Approval
+        @endif
+        </div>
     </div>
 
     <dialog id="selectDialog">
@@ -103,7 +103,7 @@
             <div class="modal-subheader">
                 Choose your primary indicators from the Philippine Development Plan's list of indicators below.
             </div>
-        <form action="{{ route('primaryIndicators.select')}}" method="POST">
+        <form action="{{ route('secondaryIndicators.select')}}" method="POST">
         @csrf
             <div class="modal-main" style="display: flex;">
                     <div>
@@ -260,7 +260,7 @@
 
                         @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
                         <td>
-                            <form action="{{ route('primaryIndicators.destroy', ['id' => $majorFinalOutput->id ]) }}" method="POST">
+                            <form action="{{ route('secondaryIndicators.destroy', ['id' => $majorFinalOutput->id ]) }}" method="POST">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="button-action" style="margin-bottom: 5px;">–</button>
@@ -311,7 +311,7 @@
 
     @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
         <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-            <form action="{{ route('primaryIndicators.submit') }}" method="POST">
+            <form action="{{ route('secondaryIndicators.submit') }}" method="POST">
                 @csrf
                 <button type="submit" class="primary-button">Submit for Approval</button>
             </form>
@@ -403,7 +403,7 @@
             function openCreateDialog(id, current_year, end_year) {
                 const storeForm = document.getElementById('storeForm');
                 const inputContainer = document.getElementById('create-input-container');
-                storeForm.action = `/indicators/primary/${id}/store`;
+                storeForm.action = `/indicators/secondary/${id}/store`;
 
                 const majorFinalOutputLabel = document.createElement('label');
                 majorFinalOutputLabel.textContent = 'Major Final Output';
@@ -437,7 +437,7 @@
 
             function openEditDialog(id, mfoID, counter, current_year, end_year, successIndicators) {
                 const updateForm = document.getElementById('updateForm');
-                updateForm.action = `/indicators/primary/${mfoID}/update`;
+                updateForm.action = `/indicators/secondary/${mfoID}/update`;
 
                 const inputContainer = document.getElementById('edit-input-container');
 

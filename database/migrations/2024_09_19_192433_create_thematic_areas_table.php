@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('thematic_areas', function (Blueprint $table) {
             $table->id();
-            $table->string('title') ->required();
+            $table->string('title')->required();
             $table->timestamps();
         });
     }

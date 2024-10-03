@@ -1,18 +1,25 @@
 <x-app-layout>
-    <x-title-page>Primary Indicators</x-title-page>
+    <x-title-page>Secondary Indicators</x-title-page>
 
     <x-horizontal-line></x-horizontal-line>
 
     <div class="options-container">
         <div style="display: flex; gap: 30px;">
             <div style="display: flex; gap: 10px;">
+                @if(!auth()->user()->isAdmin())
+                    <div>
+                        <form action="{{ route('secondaryIndicators.index') }}" method="GET">
+                            <button type="submit" class="secondary-button">Draft</button>
+                        </form>
+                    </div>
+                @endif
                 <div>
-                    <form action="{{ route('primaryIndicators.index') }}" method="GET">
-                        <button type="submit" class="secondary-button">Draft</button>
+                    <form action="{{ auth()->user()->isAdmin() ? route('secondaryIndicators.pendingAdmin') : route('secondaryIndicators.pending' , [ 'id' => auth()->user()->id, ]) }}" method="GET">
+                        <button type="submit" class="secondary-button">Pending</button>
                     </form>
                 </div>
                 <div>
-                    <form action="{{ route('primaryIndicators.approved') }}" method="GET">
+                    <form action="{{ route('secondaryIndicators.approved') }}" method="GET">
                         <button type="submit" class="secondary-button">Approved</button>
                     </form>
                 </div>
@@ -28,7 +35,7 @@
                         <span>Filter By</span>
                         <div class="close-icon-container" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">@include('svg.close-icon')</div>
                     </div>
-                    <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                    <form action="{{ route('secondaryIndicators.index')}}" method="GET">
                         @csrf
                         <div class="dropdown-main">
                                 @foreach ($selectFields as $classification => $allCategories)
@@ -47,51 +54,22 @@
                                     </div>
                                 @endforeach
                                 <input type="hidden" name="filter" value="category">
-                                <div class="line-container"></div>
-                                <div style="display: flex; justify-content: flex-end;">
-                                    <button type="submit" class="primary-button">Filter</button>
-                                </div>
+                            <div class="line-container"></div>
                         </div>
                         <div class="dropdown-footer">
-                            <button type="submit" onclick="setDefault([
-                                @foreach ($filterFields as $filterField)
-                                    '{{ $filterField }}',
-                                @endforeach
-                            ])" class="secondary-button">
-                                Set to Default
-                            </button>
+                            <button type="submit" class="primary-button">Filter</button>
                             <button type="button" class="secondary-button" onclick="toggleContent('dropdown-content-id', 'dropdown-button')">Close</button>
                         </div>
                     </form>
                 </div>
             </div>
             <div>
-                <form action="{{ route('primaryIndicators.index')}}" method="GET">
+                <form action="{{ route('secondaryIndicators.index')}}" method="GET">
                     @csrf
-                    <input type="hidden" name="filter" value="search">
-                    <input type="text" class="input-search" name="filter_search" value="{{ session('filter_search') }}" placeholder="Search...">
+                    <input type="text" class="input-search" name="search" placeholder="Search...">
                 </form>
             </div>
         </div>
-            @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                <div>
-                    <button class="manage-button" onclick="openSelectDialog()">
-                        <span>Manage Indicator</span>
-                    </button>
-                </div>
-            @endif
-
-            <div>
-                @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                    For Approval
-                @elseif ($selectedDraftIndicators[0]->indicator_status_id == '2')
-                    Focal Head Reviewing
-                @elseif ($selectedDraftIndicators[0]->indicator_status_id == '3')
-                    Planning Director Reviewing
-                @elseif ($selectedDraftIndicators[0]->indicator_status_id == '4')
-                    Executive Final Approval
-                @endif
-            </div>
     </div>
 
     <dialog id="selectDialog">
@@ -103,76 +81,15 @@
             <div class="modal-subheader">
                 Choose your primary indicators from the Philippine Development Plan's list of indicators below.
             </div>
-        <form action="{{ route('primaryIndicators.select')}}" method="POST">
-        @csrf
-            <div class="modal-main" style="display: flex;">
-                    <div>
-                        <table class="special-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 20px;"></th>
-                                    <th style="width: 250px;">Primary Indicator</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($selectedDraftIndicators as $indicator)
-                                    <tr>
-                                        <td style="width: 20px;"><input type="checkbox" name="items[]" value="{{ $indicator->id }}" checked></td>
-                                        <td style="width: 250px;">{{ $indicator->indicator }}</td>
-                                    </tr>
-                                @endforeach
-                                @foreach ($unselectedIndicators as $indicator)
-                                    <tr>
-                                        <td style="width: 20px;"><input type="checkbox" name="items[]" value="{{ $indicator->id }}"></td>
-                                        <td style="width: 250px;">{{ $indicator->indicator }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="manage-content" style="display: none;">
-                        <table class="special-table">
-                            <thead>
-                                <tr>
-                                    <th style="width: 300px;">Operational Definition</th>
-                                    <th style="width: 55px;">HNRDA</th>
-                                    <th style="width: 65px;">Priority</th>
-                                    <th style="width: 60px;">SDG</th>
-                                    <th style="width: 120px;">Strategic Pillar</th>
-                                    <th style="width: 120px;">Thematic Area</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($selectedDraftIndicators as $indicator)
-                                    <tr>
-                                        <td style="width: 100px;">{{ $indicator->operational_definition }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->hnrda)  ?  $indicator->hnrda->title :  ''}}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->priority)  ?  $indicator->priority->title : '' }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->sdg)  ?  $indicator->sdg->title : '' }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->strategicPillar)  ?  $indicator->strategicPillar->title : '' }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->thematicArea)  ?  $indicator->thematicArea->title : '' }}</td>
-                                    </tr>
-                                @endforeach
-                                @foreach ($unselectedIndicators as $indicator)
-                                    <tr>
-                                        <td style="width: 100px;">{{ $indicator->operational_definition }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->hnrda)  ?  $indicator->hnrda->title :  ''}}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->priority)  ?  $indicator->priority->title : '' }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->sdg)  ?  $indicator->sdg->title : '' }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->strategicPillar)  ?  $indicator->strategicPillar->title : '' }}</td>
-                                        <td style="width: 100px;">{{ isset($indicator->thematicArea)  ?  $indicator->thematicArea->title : '' }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="extend-container">
-                        <button class="button-cancel" onclick="toggleManage('manage-content', 'manage-icon')" style="border-radius: 2px; background-color: #e9e9e9;">
-                            <div class="extend-arrow-container" id="manage-icon" style="transform: rotate(180deg);">
-                                @include('svg.dropleft-icon')
-                            </div>
-                        </button>
-                    </div>
+            <form action="{{ route('secondaryIndicators.select')}}" method="POST">
+                <div class="modal-main">
+                    @csrf
+                    @foreach($unselectedIndicators as $unselectedIndicator)
+                        <div>
+                            <input type="checkbox" name="items[]" value="{{ $unselectedIndicator->id }}">
+                            <label>{{ $unselectedIndicator->indicator }}</label>
+                        </div>
+                    @endforeach
                     <div class="line-container"></div>
                 </div>
                 <div class="modal-footer">
@@ -191,11 +108,7 @@
                 <th rowspan="2">Indicator</th>
                 <th rowspan="2">Major Final Output</th>
                 <th colspan="6" style="text-align: center;">Target</th>
-                <th rowspan="2">Remarks</th>
                 <th rowspan="2">Comments</th>
-                @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                    <th rowspan="2">Action</th>
-                @endif
             </tr>
             <tr>
                 @foreach ($years as $year)
@@ -249,32 +162,11 @@
                                     <div class="comment-content" id="comment-{{ $comment->id }}">{{ $comment->comment }}</div>
                                 </div>
                             @endforeach
-                        </td>
-
-                        <td>
                             <form action="{{ route('comment.store', ['id' => $majorFinalOutput->id ]) }}" method="POST">
                                 @csrf
                                 <input type="text" name="comment" class="input-comment" placeholder="Add comment">
                             </form>
                         </td>
-
-                        @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                        <td>
-                            <form action="{{ route('primaryIndicators.destroy', ['id' => $majorFinalOutput->id ]) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="button-action" style="margin-bottom: 5px;">–</button>
-                            </form>
-                            <button class="button-action" onclick="openEditDialog({{ $displayedIndicator->id }}, {{ $majorFinalOutput->id }}, {{ $counter }},
-                                {{ $currentYear }}, {{ $displayedIndicator->end_year }},
-                                 {
-                                    @for ($year = $currentYear; $year <= $displayedIndicator->end_year; $year++)
-                                       '_{{ $year }}': '{{ $successIndicators->firstWhere('year', $year)->target ??  '' }}',
-                                    @endfor
-                                 })"
-                                    style="cursor: pointer;">/</button>
-                        </td>
-                        @endif
                     </tr>
                 @endforeach
 
@@ -296,28 +188,28 @@
                     <td>
 
                     </td>
-
-                    @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-                    <td>
-                        <button class="button-action" onclick="openCreateDialog({{ $displayedIndicator->id }}, {{ $currentYear }}, {{ $displayedIndicator->end_year }})">+</button>
-                    </td>
-                    @endif
                 </tr>
             @endforeach
         </tbody>
     </table>
     </div>
-    </div>
 
-    @if ($selectedDraftIndicators[0]->indicator_status_id == '1')
-        <div style="display: flex; justify-content: flex-end; margin-top: 30px;">
-            <form action="{{ route('primaryIndicators.submit') }}" method="POST">
+    @if(auth()->user()->isAdmin())
+    <div style="display: flex; justify-content: flex-end; margin-top: 30px; gap: 10px;">
+        <div>
+            <form action="{{ route('secondaryIndicators.disapprove', ['id' => $userID]) }}" method="POST">
                 @csrf
-                <button type="submit" class="primary-button">Submit for Approval</button>
+                <button type="submit" class="secondary-button">Disapprove</button>
             </form>
         </div>
+        <div>
+            <form action="{{ route('secondaryIndicators.approve', ['id' => $userID]) }}" method="POST">
+                @csrf
+                <button type="submit" class="primary-button">Approve</button>
+            </form>
+        </div>
+    </div>
     @endif
-
 
     <dialog id="createDialog">
         <div class="modal-content" id="modal-content-id">
@@ -403,7 +295,7 @@
             function openCreateDialog(id, current_year, end_year) {
                 const storeForm = document.getElementById('storeForm');
                 const inputContainer = document.getElementById('create-input-container');
-                storeForm.action = `/indicators/primary/${id}/store`;
+                storeForm.action = `/indicators/secondary/${id}/store`;
 
                 const majorFinalOutputLabel = document.createElement('label');
                 majorFinalOutputLabel.textContent = 'Major Final Output';
@@ -437,7 +329,7 @@
 
             function openEditDialog(id, mfoID, counter, current_year, end_year, successIndicators) {
                 const updateForm = document.getElementById('updateForm');
-                updateForm.action = `/indicators/primary/${mfoID}/update`;
+                updateForm.action = `/indicators/secondary/${mfoID}/update`;
 
                 const inputContainer = document.getElementById('edit-input-container');
 
@@ -497,21 +389,6 @@
                 dialogContainer.close();
 
                 inputContainer.innerHTML = '';
-            }
-
-            function toggleManage(content, dropdown) {
-                var content = document.getElementById(content);
-                var dropdownIcon = document.getElementById(dropdown);
-
-                if(content.style.display == "none" || content.style.display == "") {
-                    content.style.display = "block";
-                    dropdownIcon.style.transform = "";
-                } else {
-                    content.style.display = "none";
-                    dropdownIcon.style.transform = "rotate(180deg)";
-                }
-
-                event.preventDefault();
             }
         </script>
     @endpush

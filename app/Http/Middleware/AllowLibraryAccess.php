@@ -4,10 +4,12 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Symfony\Component\HttpFoundation\Response;
 
-class ClearSessionData
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+
+class AllowLibraryAccess
 {
     /**
      * Handle an incoming request.
@@ -16,13 +18,10 @@ class ClearSessionData
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $currentRouteName = Route::currentRouteName();
-        $previousRouteName = session('previous_route_name');
+        if(Auth::check() && Auth::user()->access_level_id == User::ROLE_SA){
+            return $next($request);
+        }
 
-
-
-        session(['previous_route_name' => $currentRouteName]);
-
-        return $next($request);
+        return redirect(route('dashboard'))->with('error', 'You do not have access to this page.');
     }
 }

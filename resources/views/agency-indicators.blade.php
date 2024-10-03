@@ -114,7 +114,7 @@
                 <span>Add Indicator</span>
                 <div class="close-icon-container" onclick="closeDialog('createDialog')">@include('svg.close-icon')</div>
             </div>
-            <form method="POST" action="{{ route('indicators.store') }}" id="createForm">
+            <form method="POST" action="{{ route('agencyIndicators.store') }}" id="createForm">
                 @csrf
                 <div class="modal-main">
                     @foreach ($formFields as $key => $formField)
@@ -205,7 +205,7 @@
         <script>
             function openEditDialog(id, indicator, operationalDefinition, type, endYear, hnrda, priority, sdg, strategicPillar, thematicArea) {
                 const editForm = document.getElementById('editForm');
-                editForm.action = `/indicators/${id}/update`;
+                editForm.action = `/agency/indicators/${id}/update`;
                 document.getElementById('edit_indicator').value = indicator;
                 document.getElementById('edit_operationalDefinition').value = operationalDefinition;
                 document.getElementById('edit_type').value = type;
@@ -218,7 +218,7 @@
                 document.getElementById('editDialog').showModal();
 
                 const deleteForm = document.getElementById('deleteForm');
-                deleteForm.action = `/indicators/${id}/delete`
+                deleteForm.action = `/agency/indicators/${id}/delete`
             }
 
             function closeDialog(dialog) {

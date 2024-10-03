@@ -31,10 +31,10 @@ return new class extends Migration
         DB::table('users')->insert([
             [
                 'first_name' => 'DOST',
-                'last_name' => 'Executive',
-                'email' => 'executive@dost.gov.ph',
-                'access_level_id' => '1',
-                'password' => Hash::make('Executiv3'),
+                'last_name' => 'SysAdmin',
+                'email' => 'sysadmin@dost.gov.ph',
+                'access_level_id' => '3',
+                'password' => Hash::make('Sys4dmiN'),
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

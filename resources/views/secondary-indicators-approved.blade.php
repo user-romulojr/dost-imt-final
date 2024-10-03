@@ -1,5 +1,5 @@
 <x-app-layout>
-    <x-title-page>Primary Indicators</x-title-page>
+    <x-title-page>Secondary Indicators</x-title-page>
 
     <x-horizontal-line></x-horizontal-line>
 
@@ -7,12 +7,12 @@
         <div style="display: flex; gap: 30px;">
             <div style="display: flex; gap: 10px;">
                 <div>
-                    <form action="{{ auth()->user()->isAdmin() ? route('primaryIndicators.pendingAdmin') : route('primaryIndicators.index') }}" method="GET">
+                    <form action="{{ auth()->user()->isAdmin() ? route('secondaryIndicators.pendingAdmin') : route('secondaryIndicators.index') }}" method="GET">
                         <button type="submit" class="secondary-button">{{ auth()->user()->isAdmin() ? 'Pending' : 'Draft'}}</button>
                     </form>
                 </div>
                 <div>
-                    <form action="{{ route('primaryIndicators.approved') }}" method="GET">
+                    <form action="{{ route('secondaryIndicators.approved') }}" method="GET">
                         <button type="submit" class="secondary-button">Approved</button>
                     </form>
                 </div>
@@ -181,7 +181,7 @@
             function openCreateDialog(id, current_year, end_year) {
                 const storeForm = document.getElementById('storeForm');
                 const inputContainer = document.getElementById('create-input-container');
-                storeForm.action = `/indicators/primary/${id}/store`;
+                storeForm.action = `/indicators/secondary/${id}/store`;
 
                 const majorFinalOutputLabel = document.createElement('label');
                 majorFinalOutputLabel.textContent = 'Major Final Output';
@@ -215,7 +215,7 @@
 
             function openEditDialog(id, mfoID, counter, current_year, end_year, successIndicators) {
                 const updateForm = document.getElementById('updateForm');
-                updateForm.action = `/indicators/primary/${mfoID}/update`;
+                updateForm.action = `/indicators/secondary/${mfoID}/update`;
 
                 const inputContainer = document.getElementById('edit-input-container');
 

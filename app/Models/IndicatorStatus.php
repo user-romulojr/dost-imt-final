@@ -16,4 +16,9 @@ class IndicatorStatus extends Model
     {
         return $this->hasMany(Indicator::class);
     }
+
+    public function indicatorsGroups(): HasMany
+    {
+        return $this->hasMany(IndicatorsGroup::class);
+    }
 }

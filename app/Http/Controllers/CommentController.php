@@ -25,7 +25,7 @@ class CommentController extends Controller
             'user_id' => Auth::id(),
         ]);
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect()->back();
     }
 
     public function update($commentID, Request $request): RedirectResponse
@@ -38,7 +38,7 @@ class CommentController extends Controller
 
         $comment->update($data);
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect()->back();
     }
 
     public function destroy($indicatorID)
@@ -46,6 +46,6 @@ class CommentController extends Controller
         $comment = Comment::findOrFail($indicatorID);
         $comment->delete();
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect()->back();
     }
 }

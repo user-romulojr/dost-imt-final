@@ -22,8 +22,7 @@ use Illuminate\Support\Facades\Redirect;
 
 use Illuminate\Support\Facades\Route;
 
-
-class PrimaryIndicatorController extends Controller
+class SecondaryIndicatorController extends Controller
 {
     public $selectLabels = [
         'hnrda' => 'HNRDA',
@@ -50,7 +49,7 @@ class PrimaryIndicatorController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $indicators = Indicator::all()->where('indicator_status_id', '!=', '5')->where('is_primary', true);
+        $indicators = Indicator::all()->where('indicator_status_id', '!=', '5')->where('is_primary', false);
 
         $selectFields = [
             'hnrda' => Hnrda::all(),
@@ -75,7 +74,7 @@ class PrimaryIndicatorController extends Controller
         $selectedDraftIndicatorIDs = [ ];
         foreach($selectedIndicators as $selectedIndicator)
         {
-            if($selectedIndicator->indicator_status_id != '5' && $selectedIndicator->is_primary){
+            if($selectedIndicator->indicator_status_id != '5' && !$selectedIndicator->is_primary){
                 array_push($selectedDraftIndicators, $selectedIndicator);
                 array_push($selectedDraftIndicatorIDs, $selectedIndicator->id);
             }
@@ -102,7 +101,7 @@ class PrimaryIndicatorController extends Controller
 
         $query = Indicator::query();
 
-        $query->where('is_primary', true);
+        $query->where('is_primary', false);
         $query->where('indicator_status_id', '!=', '5');
 
         $userId = $user->id;
@@ -142,7 +141,7 @@ class PrimaryIndicatorController extends Controller
 
 
         if(empty($selectedDraftIndicators)) {
-            return view('primary-indicators-empty', ['selectedDraftIndicators' => $selectedDraftIndicators,
+            return view('secondary-indicators-empty', ['selectedDraftIndicators' => $selectedDraftIndicators,
                                             'unselectedIndicators' => $unselectedIndicators,
                                             'displayedIndicators' => $displayedIndicators,
                                             'currentYear' => date('Y'),
@@ -153,7 +152,7 @@ class PrimaryIndicatorController extends Controller
                                         ]);
         }
 
-        return view('primary-indicators', ['selectedDraftIndicators' => $selectedDraftIndicators,
+        return view('secondary-indicators', ['selectedDraftIndicators' => $selectedDraftIndicators,
                                             'unselectedIndicators' => $unselectedIndicators,
                                             'displayedIndicators' => $displayedIndicators,
                                             'currentYear' => date('Y'),
@@ -169,7 +168,7 @@ class PrimaryIndicatorController extends Controller
         $user = Auth::user();
         $user->indicators()->sync($request->items);
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect(route('secondaryIndicators.index'));
     }
 
     public function update($majorFinalOutputID, Request $request): RedirectResponse
@@ -187,7 +186,7 @@ class PrimaryIndicatorController extends Controller
             ]);
         }
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect(route('secondaryIndicators.index'));
     }
 
     public function destroy($majorFinalOutputID): RedirectResponse
@@ -196,7 +195,7 @@ class PrimaryIndicatorController extends Controller
 
         $majorFinalOutput->delete();
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect(route('secondaryIndicators.index'));
     }
 
 
@@ -217,7 +216,7 @@ class PrimaryIndicatorController extends Controller
             ]);
         }
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect(route('secondaryIndicators.index'));
     }
 
     public function submit(): RedirectResponse
@@ -239,7 +238,7 @@ class PrimaryIndicatorController extends Controller
             }
         }
 
-        return redirect(route('primaryIndicators.index'));
+        return redirect(route('secondaryIndicators.index'));
     }
 
     public function approve($indicatorsGroupID): RedirectResponse
@@ -276,7 +275,7 @@ class PrimaryIndicatorController extends Controller
 
         $indicatorsGroup->save();
 
-        return redirect(route('primaryIndicators.pendingAdmin'));
+        return redirect(route('secondaryIndicators.pendingAdmin'));
     }
 
     public function disapprove($indicatorsGroupID): RedirectResponse
@@ -306,7 +305,7 @@ class PrimaryIndicatorController extends Controller
         $indicatorsGroup->is_approved = false;
         $indicatorsGroup->save();
 
-        return redirect(route('primaryIndicators.pendingAdmin'));
+        return redirect(route('secondaryIndicators.pendingAdmin'));
     }
 
     public function pending(Request $request, $userID)
@@ -392,7 +391,7 @@ class PrimaryIndicatorController extends Controller
         $currentUserRole = Auth::user()->accessLevel->id;
         $isAdmin = ($currentUserRole >= 2 && $currentUserRole <= 4);
 
-        return view('primary-indicators-restricted', ['selectedIndicators' => $selectedIndicators,
+        return view('secondary-indicators-restricted', ['selectedIndicators' => $selectedIndicators,
                                             'unselectedIndicators' => $unselectedIndicators,
                                             'displayedIndicators' => $displayedIndicators,
                                             'currentYear' => date('Y'),
@@ -420,7 +419,7 @@ class PrimaryIndicatorController extends Controller
 
         $approvedIndicators =  [ ];
         foreach( $user->indicatorsGroups as $indicatorsGroup){
-            if($indicatorsGroup->indicator_status_id == 5 && $indicatorsGroup->indicators()->first()->is_primary){
+            if($indicatorsGroup->indicator_status_id == 5 && !$indicatorsGroup->indicators()->first()->is_primary){
                 array_push($approvedIndicators, $indicatorsGroup);
             }
         }
@@ -437,10 +436,10 @@ class PrimaryIndicatorController extends Controller
         }
 
         if(empty($approvedIndicators)){
-            return view('primary-indicators-approved-empty');
+            return view('secondary-indicators-approved-empty');
         }
 
-        return view('primary-indicators-approved', [ 'approvedIndicators' => $approvedIndicators,
+        return view('secondary-indicators-approved', [ 'approvedIndicators' => $approvedIndicators,
                                                         'currentYear' => date('Y'),
                                                         'years' => $years,
                                             ]);
@@ -512,10 +511,10 @@ class PrimaryIndicatorController extends Controller
         }
 
         if(empty($approvedIndicators)){
-            return view('primary-indicators-approved-empty');
+            return view('secondary-indicators-approved-empty');
         }
 
-        return view('primary-indicators-approved', [ 'approvedIndicators' => $approvedIndicators,
+        return view('secondary-indicators-approved', [ 'approvedIndicators' => $approvedIndicators,
                                                         'currentYear' => date('Y'),
                                                         'years' => $years,
                                             ]);

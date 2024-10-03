@@ -15,13 +15,15 @@ return new class extends Migration
     {
         Schema::create('indicator_statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('title', '10');
+            $table->string('title', '30');
             $table->timestamps();
         });
 
         DB::table('indicator_statuses')->insert([
             ['title' => 'Draft', 'created_at' => now(), 'updated_at' => now()],
-            ['title' => 'Pending', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Pending - Agency Head', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Pending - Planning Director', 'created_at' => now(), 'updated_at' => now()],
+            ['title' => 'Pending - Executive', 'created_at' => now(), 'updated_at' => now()],
             ['title' => 'Approved', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
